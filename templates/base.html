@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ElGgolearn{% endblock %} — تعلم تقني بالعربي</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#6366f1', dark: '#4f46e5', light: '#818cf8' },
+            surface: { DEFAULT: '#0f172a', card: '#1e293b', border: '#334155' }
+          }
+        }
+      }
+    }
+  </script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-surface text-slate-100 min-h-screen font-sans antialiased">
+  {% include "components/navbar.html" %}
+  <main class="{% block main_class %}max-w-7xl mx-auto px-4 py-8{% endblock %}">
+    {% if messages %}
+    <div class="mb-4 space-y-2">
+      {% for message in messages %}
+      <div class="rounded-lg px-4 py-3 text-sm {% if message.tags == 'error' %}bg-red-900/50 text-red-200{% else %}bg-brand/20 text-indigo-200{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  {% include "components/chat_bubble.html" %}
+  <script src="{% static 'js/pomodoro-float.js' %}"></script>
+  <script src="{% static 'js/chat.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

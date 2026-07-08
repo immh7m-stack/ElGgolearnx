@@ -1,0 +1,241 @@
+{
+  "$schema": "elggolearn-roadmap-v1",
+  "meta": {
+    "slug": "machine_learning",
+    "name_ar": "تعلم الآلة",
+    "name_en": "Machine Learning",
+    "icon": "🤖",
+    "color": "#10b981",
+    "description_ar": "تعلم الآلة",
+    "description_en": "Machine Learning",
+    "last_updated": "2025-01-01",
+    "contributors": []
+  },
+  "career_tracks": {
+    "junior": {
+      "goal_ar": "إتقان مستوى junior",
+      "goal_en": "Master junior level",
+      "duration_months": 3,
+      "projects_required": 3,
+      "can_do": {
+        "ar": [
+          "يتعلم بشكل مستقل"
+        ],
+        "en": [
+          "Learn independently"
+        ]
+      },
+      "job_requirements": [],
+      "playlists": {
+        "ar": {
+          "primary": {
+            "youtube_url": "https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "playlist_id": "PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "channel": "Elzero Web School",
+            "title": "Placeholder Playlist",
+            "approx_views": 100000,
+            "verified_year": 2024
+          }
+        }
+      },
+      "modules": [
+        {
+          "id": 1,
+          "order": 1,
+          "title_ar": "أساسيات تعلم الآلة",
+          "title_en": "Machine Learning fundamentals",
+          "summary_ar": "مقدمة",
+          "summary_en": "Introduction",
+          "duration_days": 14,
+          "icon": "📦",
+          "eng_query": "Machine Learning",
+          "skills": [
+            {
+              "id": "junior_1_1",
+              "order": 1,
+              "title_ar": "المفاهيم الأساسية",
+              "title_en": "Core concepts",
+              "description_ar": "فهم الأساسيات",
+              "description_en": "Understand basics",
+              "duration_days": 3,
+              "skill_type": "concept",
+              "resources": {
+                "docs": [],
+                "free_books": [],
+                "practice_urls": []
+              }
+            }
+          ]
+        }
+      ],
+      "required_projects": [
+        {
+          "id": "juniorp1",
+          "order": 1,
+          "title_ar": "مشروع junior",
+          "title_en": "junior project",
+          "description_ar": "مشروع تطبيقي على GitHub",
+          "description_en": "Hands-on GitHub project",
+          "difficulty": 2,
+          "estimated_days": 5,
+          "skills_covered": [],
+          "requirements": [
+            "رفع على GitHub"
+          ],
+          "bonus_features": [],
+          "example_repo": ""
+        }
+      ]
+    },
+    "mid": {
+      "goal_ar": "إتقان مستوى mid",
+      "goal_en": "Master mid level",
+      "duration_months": 6,
+      "projects_required": 2,
+      "can_do": {
+        "ar": [
+          "يتعلم بشكل مستقل"
+        ],
+        "en": [
+          "Learn independently"
+        ]
+      },
+      "job_requirements": [],
+      "playlists": {
+        "ar": {
+          "primary": {
+            "youtube_url": "https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "playlist_id": "PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "channel": "Elzero Web School",
+            "title": "Placeholder Playlist",
+            "approx_views": 100000,
+            "verified_year": 2024
+          }
+        }
+      },
+      "modules": [
+        {
+          "id": 1,
+          "order": 1,
+          "title_ar": "أساسيات تعلم الآلة",
+          "title_en": "Machine Learning fundamentals",
+          "summary_ar": "مقدمة",
+          "summary_en": "Introduction",
+          "duration_days": 14,
+          "icon": "📦",
+          "eng_query": "Machine Learning",
+          "skills": [
+            {
+              "id": "mid_1_1",
+              "order": 1,
+              "title_ar": "المفاهيم الأساسية",
+              "title_en": "Core concepts",
+              "description_ar": "فهم الأساسيات",
+              "description_en": "Understand basics",
+              "duration_days": 3,
+              "skill_type": "concept",
+              "resources": {
+                "docs": [],
+                "free_books": [],
+                "practice_urls": []
+              }
+            }
+          ]
+        }
+      ],
+      "required_projects": [
+        {
+          "id": "midp1",
+          "order": 1,
+          "title_ar": "مشروع mid",
+          "title_en": "mid project",
+          "description_ar": "مشروع تطبيقي على GitHub",
+          "description_en": "Hands-on GitHub project",
+          "difficulty": 2,
+          "estimated_days": 5,
+          "skills_covered": [],
+          "requirements": [
+            "رفع على GitHub"
+          ],
+          "bonus_features": [],
+          "example_repo": ""
+        }
+      ]
+    },
+    "senior": {
+      "goal_ar": "إتقان مستوى senior",
+      "goal_en": "Master senior level",
+      "duration_months": 12,
+      "projects_required": 1,
+      "can_do": {
+        "ar": [
+          "يتعلم بشكل مستقل"
+        ],
+        "en": [
+          "Learn independently"
+        ]
+      },
+      "job_requirements": [],
+      "playlists": {
+        "ar": {
+          "primary": {
+            "youtube_url": "https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "playlist_id": "PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "channel": "Elzero Web School",
+            "title": "Placeholder Playlist",
+            "approx_views": 100000,
+            "verified_year": 2024
+          }
+        }
+      },
+      "modules": [
+        {
+          "id": 1,
+          "order": 1,
+          "title_ar": "أساسيات تعلم الآلة",
+          "title_en": "Machine Learning fundamentals",
+          "summary_ar": "مقدمة",
+          "summary_en": "Introduction",
+          "duration_days": 14,
+          "icon": "📦",
+          "eng_query": "Machine Learning",
+          "skills": [
+            {
+              "id": "senior_1_1",
+              "order": 1,
+              "title_ar": "المفاهيم الأساسية",
+              "title_en": "Core concepts",
+              "description_ar": "فهم الأساسيات",
+              "description_en": "Understand basics",
+              "duration_days": 3,
+              "skill_type": "concept",
+              "resources": {
+                "docs": [],
+                "free_books": [],
+                "practice_urls": []
+              }
+            }
+          ]
+        }
+      ],
+      "required_projects": [
+        {
+          "id": "seniorp1",
+          "order": 1,
+          "title_ar": "مشروع senior",
+          "title_en": "senior project",
+          "description_ar": "مشروع تطبيقي على GitHub",
+          "description_en": "Hands-on GitHub project",
+          "difficulty": 2,
+          "estimated_days": 5,
+          "skills_covered": [],
+          "requirements": [
+            "رفع على GitHub"
+          ],
+          "bonus_features": [],
+          "example_repo": ""
+        }
+      ]
+    }
+  }
+}

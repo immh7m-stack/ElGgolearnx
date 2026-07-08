@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Educational Sites / مواقع تعليمية{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-2">Educational Sites</h1>
+<p class="text-slate-400 mb-8 text-sm">Free & paid resources in one place — مواقع تسهّل التعلم بدون تشتت</p>
+
+<div class="flex flex-wrap gap-2 mb-8">
+  <a href="{% url 'library:sites' %}" class="px-3 py-1 rounded-full text-sm border {% if not current_category %}border-brand bg-brand/20{% else %}border-surface-border{% endif %}">All</a>
+  {% for key, label in categories %}
+  <a href="?category={{ key }}" class="px-3 py-1 rounded-full text-sm border {% if current_category == key %}border-brand bg-brand/20{% else %}border-surface-border{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="grid md:grid-cols-2 gap-5">
+  {% for site in sites %}
+  <article class="p-5 rounded-xl bg-surface-card border border-surface-border hover:border-brand/40 transition">
+    <div class="flex items-start gap-3">
+      <span class="text-2xl">{{ site.icon }}</span>
+      <div>
+        <h2 class="font-bold">{{ site.name }}</h2>
+        {% if site.name_ar %}<p class="text-sm text-slate-500">{{ site.name_ar }}</p>{% endif %}
+        <p class="text-sm text-slate-400 mt-2">{{ site.description_en }}</p>
+        {% if site.description_ar %}<p class="text-xs text-slate-500 mt-1">{{ site.description_ar }}</p>{% endif %}
+        <div class="flex gap-2 mt-3 text-xs">
+          <span class="px-2 py-0.5 rounded {% if site.is_free %}bg-emerald-900/30 text-emerald-300{% else %}bg-amber-900/30 text-amber-300{% endif %}">
+            {% if site.is_free %}Free{% else %}Paid{% endif %}
+          </span>
+          <span class="px-2 py-0.5 rounded bg-surface text-slate-400">{{ site.get_category_display }}</span>
+        </div>
+        <a href="{{ site.url }}" target="_blank" rel="noopener"
+           class="inline-block mt-3 text-sm text-brand hover:underline">Visit site →</a>
+      </div>
+    </div>
+  </article>
+  {% empty %}
+  <p class="col-span-2 text-slate-400">Run: python manage.py seed_sites</p>
+  {% endfor %}
+</div>
+{% endblock %}

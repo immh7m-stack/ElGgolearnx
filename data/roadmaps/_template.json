@@ -1,0 +1,45 @@
+{
+  "$schema": "elggolearn-roadmap-v1",
+  "meta": {
+    "slug": "your-field",
+    "name_ar": "اسم المجال",
+    "name_en": "Field Name",
+    "icon": "📚",
+    "color": "#6366f1",
+    "description_ar": "وصف بالعربية",
+    "description_en": "Description in English",
+    "last_updated": "2025-01-01",
+    "contributors": ["@github_username"]
+  },
+  "career_tracks": {
+    "junior": {
+      "goal_ar": "هدف المستوى",
+      "goal_en": "Level goal",
+      "duration_months": 3,
+      "projects_required": 3,
+      "can_do": { "ar": [], "en": [] },
+      "job_requirements": [],
+      "playlists": {},
+      "modules": [],
+      "required_projects": []
+    },
+    "mid": {
+      "goal_ar": "",
+      "goal_en": "",
+      "duration_months": 6,
+      "projects_required": 2,
+      "can_do": { "ar": [], "en": [] },
+      "modules": [],
+      "required_projects": []
+    },
+    "senior": {
+      "goal_ar": "",
+      "goal_en": "",
+      "duration_months": 12,
+      "projects_required": 1,
+      "can_do": { "ar": [], "en": [] },
+      "modules": [],
+      "required_projects": []
+    }
+  }
+}

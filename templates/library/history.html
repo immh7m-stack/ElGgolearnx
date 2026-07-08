@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}سجل قوائم التشغيل{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-2">سجل قوائم التشغيل</h1>
+<p class="text-slate-400 text-sm mb-8">القوائم التي فتحتها أو حفظتها تظهر هنا — دون سجل بحث نصي.</p>
+
+{% if playlists %}
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  {% for pl in playlists %}
+  <a href="{% url 'library:watch' %}?url={{ pl.youtube_url|urlencode }}&title={{ pl.title|urlencode }}&list={{ pl.playlist_id }}"
+     class="block rounded-xl overflow-hidden bg-surface-card border border-surface-border hover:border-brand/40">
+    {% if pl.thumbnail %}
+    <img src="{{ pl.thumbnail }}" alt="" class="w-full aspect-video object-cover">
+    {% endif %}
+    <div class="p-3 flex justify-between items-start gap-2">
+      <p class="text-sm font-medium line-clamp-2 flex-1">{{ pl.title }}</p>
+      {% if pl.is_saved_explicit %}
+      <span class="text-[10px] uppercase tracking-wide text-emerald-400 whitespace-nowrap">محفوظ</span>
+      {% else %}
+      <span class="text-[10px] uppercase tracking-wide text-slate-500 whitespace-nowrap">زيارة</span>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-slate-400 text-sm">لم تفتح أي قائمة بعد. ابحث عن كورس أو افتح مساراً من Roadmaps.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,193 @@
+{
+  "$schema": "elggolearn-roadmap-v1",
+  "meta": {
+    "slug": "python",
+    "name_ar": "Python",
+    "name_en": "Python",
+    "icon": "🐍",
+    "color": "#3776ab",
+    "description_ar": "",
+    "description_en": "Job-ready Junior Python: syntax → OOP → APIs → 5 GitHub projects. Playlists are ordered; finish all + projects to call yourself Junior.",
+    "last_updated": "2025-05-15",
+    "contributors": ["elggolearn"]
+  },
+  "career_tracks": {
+    "junior": {
+      "goal_ar": "",
+      "goal_en": "You can read docs, write scripts, use Git, and ship 5 small apps employers expect from a Junior Python dev.",
+      "duration_months": 3,
+      "projects_required": 5,
+      "projects_to_advance": 5,
+      "books_required": 2,
+      "ready_when_ar": "",
+      "ready_when_en": "You completed all core playlists below AND pushed 5 projects to GitHub with README files.",
+      "can_do": {
+        "ar": [],
+        "en": [
+          "Variables, types, if/for/while, functions",
+          "Lists, dicts, sets, list comprehensions",
+          "pip, venv, import modules",
+          "Classes, __init__, simple inheritance",
+          "Read/write files and JSON",
+          "Call REST APIs with requests",
+          "Git: init, commit, push, clone",
+          "Debug using tracebacks and print/logging"
+        ]
+      },
+      "job_requirements": [
+        "Python 3 fundamentals (syntax, data structures, control flow)",
+        "Write functions and small modules",
+        "OOP: classes, objects, basic inheritance",
+        "File I/O, JSON, CSV",
+        "HTTP client (requests) + parse JSON",
+        "Virtual environments and pip",
+        "Git & GitHub for version control",
+        "Basic testing mindset (run code, fix errors)",
+        "Read official docs and follow tutorials independently"
+      ],
+      "curated_playlists": [
+        {
+          "order": 1,
+          "role": "Core — Python basics",
+          "lang": "en",
+          "playlist_id": "PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU",
+          "title": "Python Tutorial — Corey Schafer",
+          "channel": "Corey Schafer",
+          "youtube_url": "https://www.youtube.com/playlist?list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU",
+          "is_primary": true
+        },
+        {
+          "order": 2,
+          "role": "Core — Arabic full track",
+          "lang": "ar",
+          "playlist_id": "PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+          "title": "Python 3 — Elzero Web School",
+          "channel": "Elzero Web School",
+          "youtube_url": "https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs"
+        },
+        {
+          "order": 3,
+          "role": "Practice — 12 projects",
+          "lang": "en",
+          "playlist_id": "PLzMcBGfZo4Hn2UKBuPRVNltt5zHrze5vN",
+          "title": "12 Beginner Python Projects",
+          "channel": "freeCodeCamp.org",
+          "youtube_url": "https://www.youtube.com/playlist?list=PLzMcBGfZo4Hn2UKBuPRVNltt5zHrze5vN"
+        },
+        {
+          "order": 4,
+          "role": "APIs & automation",
+          "lang": "en",
+          "playlist_id": "PLCB364772D929D494",
+          "title": "Python for Automation",
+          "channel": "Tech With Tim",
+          "youtube_url": "https://www.youtube.com/playlist?list=PLCB364772D929D494"
+        }
+      ],
+      "modules": [
+        {
+          "order": 1,
+          "title_ar": "",
+          "title_en": "Syntax, variables, control flow",
+          "summary_ar": "",
+          "summary_en": "Covers if/else, for, while, functions, and clean script structure.",
+          "duration_days": 10,
+          "icon": "🧱",
+          "eng_query": "Python syntax variables loops functions",
+          "skills": [
+            {"id": "j1", "order": 1, "title_ar": "", "title_en": "Variables & types", "description_en": "int, float, str, bool, input()", "duration_days": 2, "skill_type": "concept", "resources": {"docs": ["https://docs.python.org/3/tutorial/introduction.html"]}},
+            {"id": "j2", "order": 2, "title_ar": "", "title_en": "if / for / while", "description_en": "Control flow and indentation", "duration_days": 3, "skill_type": "concept", "resources": {}},
+            {"id": "j3", "order": 3, "title_ar": "", "title_en": "Functions", "description_en": "def, return, parameters, scope", "duration_days": 3, "skill_type": "concept", "resources": {}}
+          ]
+        },
+        {
+          "order": 2,
+          "title_ar": "",
+          "title_en": "Data structures & OOP",
+          "summary_en": "Lists, dicts, sets, classes, and simple inheritance.",
+          "duration_days": 10,
+          "icon": "⚙️",
+          "eng_query": "Python OOP lists dictionaries",
+          "skills": [
+            {"id": "j4", "order": 1, "title_en": "Lists & dicts", "description_en": "Indexing, methods, comprehensions", "duration_days": 3, "skill_type": "concept", "resources": {}},
+            {"id": "j5", "order": 2, "title_en": "Classes & objects", "description_en": "__init__, methods, inheritance", "duration_days": 4, "skill_type": "concept", "resources": {}}
+          ]
+        },
+        {
+          "order": 3,
+          "title_ar": "",
+          "title_en": "Files, APIs, tooling",
+          "summary_en": "pip, venv, JSON files, requests library.",
+          "duration_days": 10,
+          "icon": "📁",
+          "eng_query": "Python requests json pip venv",
+          "skills": [
+            {"id": "j6", "order": 1, "title_en": "File I/O & JSON", "description_en": "open(), with, json module", "duration_days": 3, "skill_type": "practice", "resources": {}},
+            {"id": "j7", "order": 2, "title_en": "pip & venv", "description_en": "Install packages in isolated envs", "duration_days": 2, "skill_type": "tool", "resources": {}},
+            {"id": "j8", "order": 3, "title_en": "HTTP with requests", "description_en": "GET JSON from public APIs", "duration_days": 3, "skill_type": "practice", "resources": {}}
+          ]
+        }
+      ],
+      "required_projects": [
+        {
+          "id": "p1", "order": 1,
+          "title_ar": "", "title_en": "CLI Calculator",
+          "description_en": "Add, subtract, multiply, divide in a loop until user quits. Handle invalid input.",
+          "difficulty": 1, "estimated_days": 2,
+          "skills_covered": ["functions", "loops", "input"],
+          "requirements": ["Loop menu", "Handle divide by zero", "README on GitHub"]
+        },
+        {
+          "id": "p2", "order": 2,
+          "title_ar": "", "title_en": "Currency Converter CLI",
+          "description_en": "Fetch rates from a free API (or static JSON), convert amount between two currencies.",
+          "difficulty": 2, "estimated_days": 3,
+          "skills_covered": ["requests", "JSON", "functions"],
+          "requirements": ["User picks currencies", "Show converted amount", "Error handling"]
+        },
+        {
+          "id": "p3", "order": 3,
+          "title_ar": "", "title_en": "Todo List (JSON file)",
+          "description_en": "Add, list, complete, delete tasks; persist to tasks.json.",
+          "difficulty": 2, "estimated_days": 3,
+          "skills_covered": ["file I/O", "lists", "dicts"],
+          "requirements": ["CRUD operations", "Auto-save to JSON"]
+        },
+        {
+          "id": "p4", "order": 4,
+          "title_ar": "", "title_en": "Password Generator",
+          "description_en": "Length + options (symbols, numbers); copy to clipboard optional.",
+          "difficulty": 1, "estimated_days": 2,
+          "skills_covered": ["strings", "random", "functions"],
+          "requirements": ["Configurable length", "Secure random"]
+        },
+        {
+          "id": "p5", "order": 5,
+          "title_ar": "", "title_en": "Weather CLI",
+          "description_en": "City name → temperature, condition, humidity via OpenWeatherMap or similar.",
+          "difficulty": 2, "estimated_days": 4,
+          "skills_covered": ["API", "JSON", "error handling"],
+          "requirements": ["API key in .env", "Invalid city message", "GitHub README with screenshot"]
+        }
+      ]
+    },
+    "mid": {
+      "goal_en": "Django/Flask, databases, tests — continue after Junior is solid.",
+      "duration_months": 6,
+      "projects_required": 2,
+      "can_do": {"ar": [], "en": []},
+      "job_requirements": [],
+      "modules": [],
+      "required_projects": []
+    },
+    "senior": {
+      "goal_en": "System design, scalability — after Mid.",
+      "duration_months": 12,
+      "projects_required": 1,
+      "can_do": {"ar": [], "en": []},
+      "job_requirements": [],
+      "modules": [],
+      "required_projects": []
+    }
+  }
+}

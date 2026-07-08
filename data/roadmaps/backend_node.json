@@ -1,0 +1,320 @@
+{
+  "$schema": "elggolearn-roadmap-v1",
+  "meta": {
+    "slug": "backend_node",
+    "name_ar": "Node.js Backend",
+    "name_en": "Node.js Backend",
+    "icon": "⚡",
+    "color": "#339933",
+    "description_ar": "Node.js Backend",
+    "description_en": "Node.js Backend",
+    "last_updated": "2025-01-01",
+    "contributors": []
+  },
+  "career_tracks": {
+    "junior": {
+      "goal_ar": "إتقان مستوى junior",
+      "goal_en": "Master junior level",
+      "duration_months": 3,
+      "projects_required": 3,
+      "can_do": {
+        "ar": [
+          "يتعلم بشكل مستقل"
+        ],
+        "en": [
+          "Learn independently"
+        ]
+      },
+      "job_requirements": [
+        "JavaScript (async/await, modules)",
+        "HTTP, REST, JSON",
+        "Node.js + npm, basics of security"
+      ],
+      "roadmap_intro": {
+        "skills_ar": [
+          "JavaScript حديث (ES6+) والبرمجة غير المتزامنة",
+          "HTTP و REST و JSON وفهم حالات الاستجابة",
+          "Node.js أساسيات: npm، الوحدات، فهم مبسط لـ event loop",
+          "إطار Express أو Fastify لبناء API",
+          "قاعدة بيانات: SQL أساسي أو MongoDB",
+          "Git و GitHub وسجل commits واضح",
+          "اختبارات بسيطة ومعالجة أخطاء آمنة"
+        ],
+        "skills_en": [
+          "Modern JavaScript (ES6+) and async programming",
+          "HTTP, REST, JSON, and response codes",
+          "Node.js fundamentals: npm, modules, high-level event loop",
+          "Express or Fastify for HTTP APIs",
+          "Databases: SQL basics or MongoDB",
+          "Git, GitHub, readable commit history",
+          "Basic automated tests and safe error handling"
+        ],
+        "tips_ar": [
+          "يجب أن تعرف كيف يمر الطلب من العميل إلى الخادم إلى قاعدة البيانات قبل الدخول في بنى معقدة.",
+          "استخدم الذكاء الاصطناعي لشرح المفاهيم وتوليد مسودات، لكن نفّذ الكود بنفسك للممارسة.",
+          "أكمل مشروعاً واحداً ينتهي بنشر على GitHub مع README يشرح التشغيل."
+        ],
+        "tips_en": [
+          "Trace a full client → server → DB request before advanced topics.",
+          "Use AI to clarify concepts and drafts; implement by hand to build skill.",
+          "Finish one deployable GitHub project with a README that runs locally."
+        ]
+      },
+      "playlists": {
+        "ar": {
+          "primary": {
+            "youtube_url": "https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "playlist_id": "PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "channel": "Elzero Web School",
+            "title": "Placeholder Playlist",
+            "approx_views": 100000,
+            "verified_year": 2024
+          }
+        }
+      },
+      "modules": [
+        {
+          "id": 1,
+          "order": 1,
+          "title_ar": "أساسيات Node.js Backend",
+          "title_en": "Node.js Backend fundamentals",
+          "summary_ar": "مقدمة",
+          "summary_en": "Introduction",
+          "duration_days": 14,
+          "icon": "📦",
+          "eng_query": "Node.js Backend",
+          "skills": [
+            {
+              "id": "junior_1_1",
+              "order": 1,
+              "title_ar": "المفاهيم الأساسية",
+              "title_en": "Core concepts",
+              "description_ar": "فهم الأساسيات",
+              "description_en": "Understand basics",
+              "duration_days": 3,
+              "skill_type": "concept",
+              "resources": {
+                "docs": [],
+                "free_books": [],
+                "practice_urls": []
+              }
+            }
+          ]
+        }
+      ],
+      "required_projects": [
+        {
+          "id": "juniorp_api",
+          "order": 1,
+          "title_ar": "REST API لمدونة أو أخبار",
+          "title_en": "REST API for blog or news",
+          "description_ar": "مقالات، مستخدمون بسيطون، JWT أو جلسات، اختبارات Postman/Jest أساسية",
+          "description_en": "Posts, simple users, JWT or sessions, basic Postman/Jest checks",
+          "difficulty": 2,
+          "estimated_days": 7,
+          "skills_covered": [],
+          "requirements": [
+            "README مع أوامر التشغيل",
+            "GitHub عام"
+          ],
+          "bonus_features": [],
+          "example_repo": ""
+        }
+      ],
+      "suggested_projects": [
+        {
+          "id": "junior_sp1",
+          "order": 2,
+          "title_ar": "كتالوج منتجات (نمط تجارة إلكترونية)",
+          "title_en": "Product catalog API (e-commerce style)",
+          "description_ar": "CRUD، بحث، ترقيم صفحات، روابط صور",
+          "description_en": "CRUD, search, pagination, image URLs — like a small storefront backend",
+          "difficulty": 2,
+          "estimated_days": 6,
+          "skills_covered": [],
+          "requirements": [],
+          "bonus_features": [],
+          "example_repo": ""
+        },
+        {
+          "id": "junior_sp2",
+          "order": 3,
+          "title_ar": "واجهة برمجة مشابهة لخدمة تقويم",
+          "title_en": "Calendar-style scheduling API",
+          "description_ar": "فعاليات، تعارضات بسيطة، مناطق زمنية أساسية",
+          "description_en": "Events, simple conflicts, basic time zones",
+          "difficulty": 3,
+          "estimated_days": 8,
+          "skills_covered": [],
+          "requirements": [],
+          "bonus_features": [],
+          "example_repo": ""
+        },
+        {
+          "id": "junior_sp3",
+          "order": 4,
+          "title_ar": "بوابة ملفات/روابط (مثل خدمة مشاركة مبسطة)",
+          "title_en": "Link hub or URL shortener API",
+          "description_ar": "إنشاء روابط قصيرة أو تجميع قوائم مع عداد زيارات",
+          "description_en": "Short links or curated lists with visit counts",
+          "difficulty": 2,
+          "estimated_days": 5,
+          "skills_covered": [],
+          "requirements": [],
+          "bonus_features": [],
+          "example_repo": ""
+        }
+      ]
+    },
+    "mid": {
+      "goal_ar": "إتقان مستوى mid",
+      "goal_en": "Master mid level",
+      "duration_months": 6,
+      "projects_required": 2,
+      "can_do": {
+        "ar": [
+          "يتعلم بشكل مستقل"
+        ],
+        "en": [
+          "Learn independently"
+        ]
+      },
+      "job_requirements": [],
+      "playlists": {
+        "ar": {
+          "primary": {
+            "youtube_url": "https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "playlist_id": "PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "channel": "Elzero Web School",
+            "title": "Placeholder Playlist",
+            "approx_views": 100000,
+            "verified_year": 2024
+          }
+        }
+      },
+      "modules": [
+        {
+          "id": 1,
+          "order": 1,
+          "title_ar": "أساسيات Node.js Backend",
+          "title_en": "Node.js Backend fundamentals",
+          "summary_ar": "مقدمة",
+          "summary_en": "Introduction",
+          "duration_days": 14,
+          "icon": "📦",
+          "eng_query": "Node.js Backend",
+          "skills": [
+            {
+              "id": "mid_1_1",
+              "order": 1,
+              "title_ar": "المفاهيم الأساسية",
+              "title_en": "Core concepts",
+              "description_ar": "فهم الأساسيات",
+              "description_en": "Understand basics",
+              "duration_days": 3,
+              "skill_type": "concept",
+              "resources": {
+                "docs": [],
+                "free_books": [],
+                "practice_urls": []
+              }
+            }
+          ]
+        }
+      ],
+      "required_projects": [
+        {
+          "id": "midp1",
+          "order": 1,
+          "title_ar": "مشروع mid",
+          "title_en": "mid project",
+          "description_ar": "مشروع تطبيقي على GitHub",
+          "description_en": "Hands-on GitHub project",
+          "difficulty": 2,
+          "estimated_days": 5,
+          "skills_covered": [],
+          "requirements": [
+            "رفع على GitHub"
+          ],
+          "bonus_features": [],
+          "example_repo": ""
+        }
+      ]
+    },
+    "senior": {
+      "goal_ar": "إتقان مستوى senior",
+      "goal_en": "Master senior level",
+      "duration_months": 12,
+      "projects_required": 1,
+      "can_do": {
+        "ar": [
+          "يتعلم بشكل مستقل"
+        ],
+        "en": [
+          "Learn independently"
+        ]
+      },
+      "job_requirements": [],
+      "playlists": {
+        "ar": {
+          "primary": {
+            "youtube_url": "https://www.youtube.com/playlist?list=PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "playlist_id": "PLDoPjvoNmBAyE_gei5d18qkfIe-Z8mocs",
+            "channel": "Elzero Web School",
+            "title": "Placeholder Playlist",
+            "approx_views": 100000,
+            "verified_year": 2024
+          }
+        }
+      },
+      "modules": [
+        {
+          "id": 1,
+          "order": 1,
+          "title_ar": "أساسيات Node.js Backend",
+          "title_en": "Node.js Backend fundamentals",
+          "summary_ar": "مقدمة",
+          "summary_en": "Introduction",
+          "duration_days": 14,
+          "icon": "📦",
+          "eng_query": "Node.js Backend",
+          "skills": [
+            {
+              "id": "senior_1_1",
+              "order": 1,
+              "title_ar": "المفاهيم الأساسية",
+              "title_en": "Core concepts",
+              "description_ar": "فهم الأساسيات",
+              "description_en": "Understand basics",
+              "duration_days": 3,
+              "skill_type": "concept",
+              "resources": {
+                "docs": [],
+                "free_books": [],
+                "practice_urls": []
+              }
+            }
+          ]
+        }
+      ],
+      "required_projects": [
+        {
+          "id": "seniorp1",
+          "order": 1,
+          "title_ar": "مشروع senior",
+          "title_en": "senior project",
+          "description_ar": "مشروع تطبيقي على GitHub",
+          "description_en": "Hands-on GitHub project",
+          "difficulty": 2,
+          "estimated_days": 5,
+          "skills_covered": [],
+          "requirements": [
+            "رفع على GitHub"
+          ],
+          "bonus_features": [],
+          "example_repo": ""
+        }
+      ]
+    }
+  }
+}

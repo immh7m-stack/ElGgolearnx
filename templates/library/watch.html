@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block main_class %}max-w-full px-0 py-0{% endblock %}
+{% block content %}
+<div class="flex flex-col h-[calc(100vh-4rem)]">
+  <div class="px-4 py-3 border-b border-surface-border bg-surface-card flex items-center gap-4 flex-wrap">
+    <a href="javascript:history.back()" class="text-brand text-sm">← Back</a>
+    <h1 class="text-sm font-medium truncate flex-1">{{ title }}</h1>
+    {% if playlist_url %}
+    <a href="{{ playlist_url }}" target="_blank" rel="noopener" class="text-xs text-red-400">Open playlist on YouTube</a>
+    {% endif %}
+  </div>
+  <div class="flex flex-1 flex-col lg:flex-row overflow-hidden">
+    <div class="flex-1 bg-black flex flex-col items-center justify-center p-4 min-h-[280px] gap-3">
+      {% if videos %}
+      <p class="text-slate-500 text-xs text-center max-w-xl leading-relaxed">
+        إذا ظهر «Video unavailable» أو منع التشغيل خارج يوتيوب، استخدم الزر أدناه أو «Open playlist on YouTube».
+      </p>
+      <div id="watch-player-root"
+           class="relative w-full aspect-video max-h-[65vh] rounded-lg overflow-hidden bg-black border border-surface-border"
+           data-first-video="{{ videos.0.video_id }}">
+        <div id="watch-yt-player" class="absolute inset-0 w-full h-full"></div>
+        <div id="yt-embed-fallback"
+             class="hidden absolute inset-0 flex flex-col items-center justify-center gap-4 bg-surface-card/95 p-6 text-center z-10">
+          <p class="text-slate-200 text-sm font-medium">التضمين معطّل من صاحب الفيديو على المواقع الأخرى.</p>
+          <a id="yt-watch-direct" href="https://www.youtube.com/watch?v={{ videos.0.video_id }}"
+             target="_blank" rel="noopener"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold">
+            مشاهدة على يوتيوب
+          </a>
+        </div>
+      </div>
+      {% elif hero_thumb %}
+      <img src="{{ hero_thumb }}" alt="" class="max-h-48 rounded-lg opacity-50">
+      <p class="text-slate-400 mt-4 text-sm">Loading videos… or open on YouTube.</p>
+      {% endif %}
+    </div>
+    <aside class="w-full lg:w-80 border-t lg:border-t-0 lg:border-r border-surface-border overflow-y-auto bg-surface-card">
+      <p class="p-3 text-xs text-slate-500 border-b border-surface-border">{{ videos|length }} lessons</p>
+      <ul class="divide-y divide-surface-border">
+        {% for v in videos %}
+        <li class="flex gap-2 p-2 hover:bg-surface/50">
+          <button type="button" onclick="playYt('{{ v.video_id }}')"
+                  class="flex gap-2 w-full text-left items-center">
+            <img src="{{ v.thumbnail }}" alt="" class="w-20 h-12 object-cover rounded shrink-0" loading="lazy">
+            <span class="text-xs line-clamp-2">{{ v.title }}</span>
+          </button>
+          <form method="post" action="{% url 'library:start_download' %}" class="shrink-0 self-center">
+            {% csrf_token %}
+            <input type="hidden" name="video_id" value="{{ v.video_id }}">
+            <input type="hidden" name="video_title" value="{{ v.title }}">
+            <button type="submit" title="Download this video" class="text-xs px-2 py-1 border border-surface-border rounded">⬇</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+      {% if user.is_authenticated and playlist_url %}
+      <form method="post" action="{% url 'library:save_playlist' %}" class="p-3 border-t border-surface-border space-y-2">
+        {% csrf_token %}
+        <input type="hidden" name="url" value="{{ playlist_url }}">
+        <input type="hidden" name="title" value="{{ title }}">
+        <input type="hidden" name="thumbnail" value="{{ hero_thumb }}">
+        <input type="hidden" name="playlist_id" value="{{ playlist_id }}">
+        <button type="submit" class="w-full py-2 text-sm rounded-lg border border-surface-border hover:border-brand/50">Save playlist</button>
+      </form>
+      {% endif %}
+      {% if playlist_url %}
+      <form method="post" action="{% url 'library:start_download' %}" class="p-3 border-t border-surface-border">
+        {% csrf_token %}
+        <input type="hidden" name="url" value="{{ playlist_url }}">
+        <input type="hidden" name="title" value="{{ title }}">
+        <button type="submit" class="w-full py-2 text-sm rounded-lg bg-emerald-900/40 text-emerald-300 border border-emerald-800/50">Download full playlist</button>
+      </form>
+      {% endif %}
+    </aside>
+  </div>
+</div>
+{% if videos %}
+<script src="{% static 'js/watch_embed_player.js' %}"></script>
+{% endif %}
+{% endblock %}

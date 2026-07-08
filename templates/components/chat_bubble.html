@@ -1,0 +1,21 @@
+<div id="chat-widget"
+     class="fixed bottom-6 left-6 z-50"
+     data-field="{{ field.slug|default:'' }}"
+     data-level="{{ track.career_level|default:'' }}"
+     data-module="{{ module.title_ar|default:'' }}">
+  <button id="chat-toggle" type="button"
+          class="w-14 h-14 rounded-full bg-brand shadow-lg shadow-brand/30 flex items-center justify-center text-2xl hover:scale-105 transition"
+          aria-label="فتح المحادثة">💬</button>
+  <div id="chat-panel" class="hidden absolute bottom-16 left-0 w-80 max-h-96 bg-surface-card border border-surface-border rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+    <div class="px-4 py-3 border-b border-surface-border bg-brand/10">
+      <p class="font-semibold text-sm">🤖 مساعد ElGgolearn</p>
+      <p class="text-xs text-slate-400 mt-0.5 leading-snug" id="chat-context-label">جاري تحديد السياق…</p>
+    </div>
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-3 space-y-2 text-sm min-h-[120px] max-h-52"></div>
+    <form id="chat-form" class="p-3 border-t border-surface-border flex gap-2">
+      <input type="text" id="chat-input" placeholder="اسأل عن أي شيء..."
+             class="flex-1 bg-surface rounded-lg px-3 py-2 text-sm border border-surface-border focus:outline-none focus:border-brand">
+      <button type="submit" class="px-3 py-2 bg-brand rounded-lg text-sm font-medium hover:bg-brand-dark transition">إرسال</button>
+    </form>
+  </div>
+</div>

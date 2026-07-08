@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Search courses & books{% endblock %}
+{% block main_class %}min-h-[calc(100vh-4rem)] flex flex-col{% endblock %}
+{% block content %}
+<section class="flex-1 flex flex-col items-center justify-start pt-8 pb-16 px-4">
+  <div class="w-full max-w-3xl text-center mb-10">
+    <h1 class="text-4xl font-bold mb-3">What do you want to learn?</h1>
+    <p class="text-slate-400">YouTube playlists (sorted by views) · open-source books · watch here or download</p>
+  </div>
+
+  <form method="get" class="w-full max-w-2xl mb-6">
+    <div class="flex rounded-2xl overflow-hidden shadow-xl shadow-black/30 border border-surface-border bg-surface-card">
+      <input type="search" name="q" value="{{ query }}" autofocus required
+             placeholder="Python, React, cybersecurity..."
+             class="flex-1 px-6 py-4 bg-transparent text-lg outline-none">
+      <select name="type" class="bg-surface border-l border-surface-border px-4 text-sm outline-none">
+        <option value="courses" {% if search_type == 'courses' %}selected{% endif %}>Courses</option>
+        <option value="books" {% if search_type == 'books' %}selected{% endif %}>Books</option>
+        <option value="all" {% if search_type == 'all' %}selected{% endif %}>Both</option>
+      </select>
+      <button type="submit" class="px-8 bg-brand hover:bg-brand-dark font-semibold transition">Search</button>
+    </div>
+  </form>
+
+  {% if not query %}
+  <div class="flex flex-wrap gap-2 justify-center max-w-2xl">
+    {% for topic in quick_topics %}
+    <a href="?q={{ topic|urlencode }}&type={{ search_type }}"
+       class="px-4 py-2 rounded-full bg-surface-card border border-surface-border text-sm hover:border-brand transition">{{ topic }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if query and playlists %}
+  <div class="w-full max-w-6xl mt-12">
+    <h2 class="text-lg font-semibold mb-6 text-slate-300">YouTube playlists · highest views first</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      {% for pl in playlists %}
+      <article class="group rounded-2xl overflow-hidden bg-surface-card border border-surface-border hover:border-brand/50 hover:shadow-lg hover:shadow-brand/10 transition">
+        <a href="{% url 'library:watch' %}?url={{ pl.url|urlencode }}&title={{ pl.title|urlencode }}&list={{ pl.playlist_id }}">
+          <div class="aspect-video bg-surface relative overflow-hidden">
+            {% if pl.thumbnail %}
+            <img src="{{ pl.thumbnail }}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center text-4xl">▶</div>
+            {% endif %}
+            {% if pl.view_count %}
+            <span class="absolute bottom-2 right-2 text-xs bg-black/80 px-2 py-0.5 rounded">{{ pl.view_count|floatformat:0 }} views</span>
+            {% endif %}
+          </div>
+        </a>
+        <div class="p-4">
+          <h3 class="font-semibold text-sm line-clamp-2 leading-snug">{{ pl.title }}</h3>
+          <p class="text-xs text-slate-500 mt-1">{{ pl.channel }}{% if pl.video_count %} · {{ pl.video_count }} videos{% endif %}</p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <a href="{% url 'library:watch' %}?url={{ pl.url|urlencode }}&list={{ pl.playlist_id }}"
+               class="text-xs px-2.5 py-1 rounded-md bg-brand text-white">Watch here</a>
+            <a href="{{ pl.url }}" target="_blank" class="text-xs px-2.5 py-1 rounded-md border border-surface-border">YouTube</a>
+            <form method="post" action="{% url 'library:save_playlist' %}" class="inline">
+              {% csrf_token %}
+              <input type="hidden" name="url" value="{{ pl.url }}">
+              <input type="hidden" name="title" value="{{ pl.title }}">
+              <input type="hidden" name="thumbnail" value="{{ pl.thumbnail }}">
+              <input type="hidden" name="playlist_id" value="{{ pl.playlist_id }}">
+              <input type="hidden" name="query" value="{{ query }}">
+              <button type="submit" class="text-xs px-2.5 py-1 rounded-md border border-surface-border">Save</button>
+            </form>
+            <form method="post" action="{% url 'library:start_download' %}" class="inline">
+              {% csrf_token %}
+              <input type="hidden" name="url" value="{{ pl.url }}">
+              <input type="hidden" name="title" value="{{ pl.title }}">
+              <button type="submit" class="text-xs px-2.5 py-1 rounded-md text-emerald-400 border border-emerald-800/50">Download all</button>
+            </form>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if query and book_results %}
+  <div class="w-full max-w-4xl mt-12">
+    <h2 class="text-lg font-semibold mb-6 text-slate-300">Free books & PDFs (open source)</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      {% for book in book_results %}
+      <div class="p-4 rounded-xl bg-surface-card border border-surface-border hover:border-brand/30 transition">
+        <h3 class="font-medium text-sm">{{ book.title }}</h3>
+        <p class="text-xs text-slate-500 mt-1">{{ book.author }} · {{ book.source }}</p>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <a href="{% url 'library:read_pdf' %}?url={{ book.url|urlencode }}" target="_blank" rel="noopener"
+             class="text-xs px-3 py-1.5 rounded-md bg-brand/20 text-brand">معاينة</a>
+          <a href="{% url 'library:read_pdf' %}?url={{ book.url|urlencode }}&disposition=attachment" rel="noopener"
+             class="text-xs px-3 py-1.5 rounded-md border border-surface-border text-emerald-300 border-emerald-800/40" download>تحميل PDF</a>
+          <form method="post" action="{% url 'library:save_book' %}">
+            {% csrf_token %}
+            <input type="hidden" name="title" value="{{ book.title }}">
+            <input type="hidden" name="url" value="{{ book.url }}">
+            <button type="submit" class="text-xs px-3 py-1.5 rounded-md border border-surface-border">Save</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if query and not playlists and not book_results %}
+  <p class="text-slate-500 mt-8">No results. Check YOUTUBE_API_KEY in api.env or try another keyword.</p>
+  {% endif %}
+</section>
+{% endblock %}

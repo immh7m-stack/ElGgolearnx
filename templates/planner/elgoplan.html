@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}ElGoPlan — التخطيط والمهام{% endblock %}
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto mb-4">
+  <h1 class="text-3xl font-bold bg-gradient-to-l from-brand-light to-brand bg-clip-text text-transparent">ElGoPlan</h1>
+  <p class="text-slate-400 text-sm mt-1">بيئة عمل للطالب — أهداف، مهام، ومزامنة مع مسارات المنصة.</p>
+</div>
+<div id="elgoplan-root"></div>
+<script type="module" src="{% static 'js/elgoplan-app.js' %}"></script>
+{% endblock %}

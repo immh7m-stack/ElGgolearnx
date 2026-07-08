@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ module.title_ar }}{% endblock %}
+{% block content %}
+<nav class="text-sm text-slate-400 mb-6">
+  <a href="{% url 'roadmaps:fields' %}">المجالات</a> /
+  <a href="{% url 'roadmaps:track' slug=field.slug level=track.career_level %}">{{ field.name_ar }}</a> /
+  <span>{{ module.title_ar }}</span>
+</nav>
+
+<div class="grid lg:grid-cols-3 gap-8">
+  <div class="lg:col-span-2">
+    <h1 class="text-2xl font-bold mb-2">{{ module.icon }} {{ module.title_ar }}</h1>
+    <p class="text-slate-400 mb-8">{{ module.summary_ar }}</p>
+
+    <div class="space-y-4">
+      {% for skill in skills %}
+      <div class="p-5 rounded-xl bg-surface-card border border-surface-border {% if skill.id in done_skill_ids %}ring-1 ring-emerald-500/30{% endif %}">
+        <h2 class="font-semibold text-lg mb-2">{{ skill.title_ar }}</h2>
+        <p class="text-slate-400 text-sm mb-4">{{ skill.description_ar }}</p>
+        <p class="text-xs text-slate-500 mb-3">⏱ {{ skill.duration_days }} أيام · {{ skill.get_skill_type_display }}</p>
+        {% with res=skill.resources %}
+        {% if res.docs %}
+        <p class="text-sm font-medium mb-1">📄 التوثيق</p>
+        <ul class="text-sm text-brand mb-3 space-y-1">
+          {% for url in res.docs %}<li><a href="{{ url }}" target="_blank" rel="noopener">{{ url }}</a></li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% if res.free_books %}
+        <p class="text-sm font-medium mb-1">📖 كتب مجانية</p>
+        <ul class="text-sm text-slate-300 mb-3 space-y-1">
+          {% for book in res.free_books %}
+          <li><a href="{% url 'library:read_pdf' %}?url={{ book.url|urlencode }}" target="_blank" rel="noopener">{{ book.title }}</a> — {{ book.author }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% if res.practice_urls %}
+        <p class="text-sm font-medium mb-1">💻 تمارين</p>
+        <ul class="text-sm text-emerald-400 space-y-1">
+          {% for url in res.practice_urls %}<li><a href="{{ url }}" target="_blank">{{ url }}</a></li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'progress:toggle_skill' skill_id=skill.id %}" class="mt-4 flex justify-end">{% csrf_token %}
+          <button type="submit" class="text-xs px-3 py-1 rounded border border-surface-border text-slate-400 hover:text-white hover:border-brand/50 transition">
+            {% if skill.id in done_skill_ids %}✓ مكتملة{% else %}تعليم كمكتملة{% endif %}
+          </button>
+        </form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <aside class="space-y-4">
+    {% with ri=track.roadmap_intro %}
+    {% if ri.tips_ar or ri.tips_en %}
+    <div class="p-4 rounded-xl bg-surface-card border border-surface-border">
+      <p class="text-sm font-medium text-brand mb-2">ملاحظات المسار</p>
+      <ul class="text-xs text-slate-400 space-y-2">
+        {% if ri.tips_ar %}
+          {% for t in ri.tips_ar %}<li>💡 {{ t }}</li>{% endfor %}
+        {% else %}
+          {% for t in ri.tips_en %}<li>💡 {{ t }}</li>{% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% if playlist %}
+    <a href="{% url 'roadmaps:watch' slug=field.slug level=track.career_level %}"
+       class="block p-4 rounded-xl bg-red-600/20 border border-red-600/30 text-center hover:bg-red-600/30 transition">
+      ▶ شاهد الكورس
+    </a>
+    {% endif %}
+    <a href="https://scholar.google.com/scholar?q={{ module.eng_query|urlencode }}" target="_blank"
+       class="block p-4 rounded-xl bg-surface-card border border-surface-border text-center hover:border-brand transition">
+      📚 ابحث عن مراجع أكاديمية
+    </a>
+  </aside>
+</div>
+{% endblock %}

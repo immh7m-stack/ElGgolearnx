@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}لوحة التقدم{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">أهلاً، {{ user.get_short_name|default:user.email }} 👋</h1>
+<p class="text-slate-400 mb-8">آخر نشاط: {{ stats.last_active|default:"—" }}</p>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-brand">{{ stats.total_skills_done }}</p>
+    <p class="text-slate-400 text-sm">مهارة مكتملة</p>
+  </div>
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-emerald-400">{{ stats.total_projects_done }}</p>
+    <p class="text-slate-400 text-sm">مشروع على GitHub</p>
+  </div>
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-amber-400 capitalize">{{ stats.current_level|default:"—" }}</p>
+    <p class="text-slate-400 text-sm">المستوى</p>
+  </div>
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-orange-400">{{ stats.streak_days }}</p>
+    <p class="text-slate-400 text-sm">يوم streak</p>
+  </div>
+</div>
+
+{% if current_field and current_track %}
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border mb-10">
+  <h2 class="font-semibold mb-2">مسارك الحالي: {{ current_field.name_ar }} → {{ current_track.career_level }}</h2>
+  <p class="text-xs text-slate-500 mb-4">يُحدَّث تلقائياً عند زيارة صفحة أي مسار. نسبة المهارات = المهارات التي ضغطت «تم» في ذلك المسار ÷ إجمالي مهارات المسار (لا تعتمد على نسبة مشاهدة الفيديو).</p>
+  <p class="text-sm text-slate-400 mb-1">المهارات في هذا المسار</p>
+  <div class="w-full h-3 bg-surface rounded-full overflow-hidden mb-4">
+    <div class="h-full bg-brand rounded-full" style="width: {{ progress_pct }}%"></div>
+  </div>
+  <p class="text-sm text-slate-400 mb-1">مشاريع GitHub المطلوبة في نفس المسار ({{ track_projects_done }} / {{ track_projects_total }})</p>
+  <div class="w-full h-3 bg-surface rounded-full overflow-hidden mb-4">
+    <div class="h-full bg-emerald-500 rounded-full" style="width: {{ project_progress_pct }}%"></div>
+  </div>
+  <a href="{% url 'roadmaps:track' slug=current_field.slug level=current_track.career_level %}"
+     class="inline-block px-5 py-2 rounded-lg bg-brand hover:bg-brand-dark transition text-sm">متابعة التعلم →</a>
+</section>
+{% else %}
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border border-dashed mb-10">
+  <p class="text-slate-400 text-sm">لم يُحدَّد مسار بعد. افتح <a href="{% url 'roadmaps:fields' %}" class="text-brand hover:underline">Roadmaps</a> واختر مجالاً ومساراً ليظهر تقدمك هنا.</p>
+</section>
+{% endif %}
+
+<section>
+  <h2 class="text-xl font-bold mb-4">مشاريعك على GitHub</h2>
+  {% if project_logs %}
+  <ul class="space-y-3">
+    {% for log in project_logs %}
+    <li class="flex items-center justify-between p-4 rounded-xl bg-surface-card border border-surface-border">
+      <span>✓ {{ log.project.title_ar }}</span>
+      <a href="{{ log.github_url }}" target="_blank" class="text-brand text-sm hover:underline">{{ log.github_url }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-slate-400">لم ترفع مشاريع بعد. ابدأ من صفحة المسار.</p>
+  {% endif %}
+</section>
+{% endblock %}

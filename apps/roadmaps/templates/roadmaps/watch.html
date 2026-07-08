@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}مشاهدة — {{ watch_title|default:field.name_ar }}{% endblock %}
+{% block main_class %}max-w-full px-0 py-0{% endblock %}
+{% block content %}
+<div class="flex flex-col h-[calc(100vh-4rem)]">
+  <div class="px-4 py-3 border-b border-surface-border bg-surface-card flex items-center gap-4 flex-wrap">
+    <a href="{% url 'roadmaps:track' slug=field.slug level=track.career_level %}" class="text-brand hover:underline text-sm">← رجوع للمسار</a>
+    <h1 class="text-sm font-medium truncate flex-1">{{ watch_title }}</h1>
+    {% if playlist.youtube_url %}
+    <a href="{{ playlist.youtube_url }}" target="_blank" rel="noopener" class="text-xs text-red-400">فتح على يوتيوب</a>
+    {% endif %}
+  </div>
+  <div class="flex flex-1 flex-col lg:flex-row overflow-hidden">
+    <div class="flex-1 bg-black flex flex-col items-center justify-center p-4 min-h-[280px] gap-3">
+      {% if videos %}
+      <p class="text-slate-500 text-xs text-center max-w-xl leading-relaxed">
+        إذا ظهرت رسالة تشغيل غير متاح، استخدم «مشاهدة على يوتيوب» أو الرابط أعلى الصفحة.
+      </p>
+      <div id="watch-player-root"
+           class="relative w-full aspect-video max-h-[65vh] rounded-lg overflow-hidden bg-black border border-surface-border"
+           data-first-video="{{ videos.0.video_id }}">
+        <div id="watch-yt-player" class="absolute inset-0 w-full h-full"></div>
+        <div id="yt-embed-fallback"
+             class="hidden absolute inset-0 flex flex-col items-center justify-center gap-4 bg-surface-card/95 p-6 text-center z-10">
+          <p class="text-slate-200 text-sm font-medium">التضمين معطّل من صاحب الفيديو على المواقع الأخرى.</p>
+          <a id="yt-watch-direct" href="https://www.youtube.com/watch?v={{ videos.0.video_id }}"
+             target="_blank" rel="noopener"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold">
+            مشاهدة على يوتيوب
+          </a>
+        </div>
+      </div>
+      {% elif hero_thumb %}
+      <img src="{{ hero_thumb }}" alt="" class="max-h-48 rounded-lg opacity-50">
+      <p class="text-slate-400 mt-4 text-sm">جاري تحميل قائمة الفيديوهات… أو افتح على يوتيوب.</p>
+      {% endif %}
+    </div>
+    <aside class="w-full lg:w-80 border-t lg:border-t-0 lg:border-r border-surface-border overflow-y-auto bg-surface-card">
+      <p class="p-3 text-xs text-slate-500 border-b border-surface-border">{{ videos|length }} درس</p>
+      <ul class="divide-y divide-surface-border">
+        {% for v in videos %}
+        <li class="flex gap-2 p-2 hover:bg-surface/50">
+          <button type="button" onclick="playYt('{{ v.video_id }}')"
+                  class="flex gap-2 w-full text-left items-center">
+            <img src="{{ v.thumbnail }}" alt="" class="w-20 h-12 object-cover rounded shrink-0" loading="lazy">
+            <span class="text-xs line-clamp-2">{{ v.title }}</span>
+          </button>
+        </li>
+        {% endfor %}
+      </ul>
+      {% if user.is_authenticated and playlist.youtube_url %}
+      <form method="post" action="{% url 'library:save_playlist' %}" class="p-3 border-t border-surface-border space-y-2">
+        {% csrf_token %}
+        <input type="hidden" name="url" value="{{ playlist.youtube_url }}">
+        <input type="hidden" name="title" value="{{ watch_title }}">
+        <input type="hidden" name="thumbnail" value="{{ hero_thumb }}">
+        <input type="hidden" name="playlist_id" value="{{ playlist.playlist_id }}">
+        <button type="submit" class="w-full py-2 text-sm rounded-lg border border-surface-border hover:border-brand/50">حفظ القائمة</button>
+      </form>
+      {% endif %}
+    </aside>
+  </div>
+</div>
+{% if videos %}
+<script src="{% static 'js/watch_embed_player.js' %}"></script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}My Library / مكتبتي{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-8">My Library / مكتبتي</h1>
+
+<section class="mb-12">
+  <h2 class="text-lg font-semibold mb-4">📺 Saved Playlists</h2>
+  {% if playlists %}
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for pl in playlists %}
+    <div class="rounded-xl overflow-hidden bg-surface-card border border-surface-border flex flex-col">
+      <a href="{% url 'library:watch' %}?url={{ pl.youtube_url|urlencode }}&title={{ pl.title|urlencode }}&list={{ pl.playlist_id }}" class="block aspect-video bg-surface relative">
+        {% if pl.thumbnail %}
+        <img src="{{ pl.thumbnail }}" alt="" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center text-3xl text-slate-600">▶</div>
+        {% endif %}
+      </a>
+      <div class="p-4 flex-1 flex flex-col justify-between gap-2">
+        <div>
+          <p class="font-medium text-sm line-clamp-2">{{ pl.title }}</p>
+          {% if pl.field_slug or pl.career_level %}
+          <p class="text-xs text-slate-500 mt-1">{{ pl.field_slug }} · {{ pl.career_level }}</p>
+          {% endif %}
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <a href="{% url 'library:watch' %}?url={{ pl.youtube_url|urlencode }}&title={{ pl.title|urlencode }}&list={{ pl.playlist_id }}" class="text-sm text-brand">Watch</a>
+          <a href="{{ pl.youtube_url }}" target="_blank" rel="noopener" class="text-sm text-slate-400">YouTube</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-slate-400 text-sm">No playlists yet — search and save from Search page.</p>
+  {% endif %}
+</section>
+
+<section class="mb-12">
+  <h2 class="text-lg font-semibold mb-4">📚 Saved Books & Resources</h2>
+  {% if items %}
+  <ul class="space-y-2">
+    {% for item in items %}
+    <li class="p-3 rounded-lg bg-surface-card border border-surface-border flex justify-between items-center flex-wrap gap-2">
+      <span>{{ item.title }} <span class="text-xs text-slate-500">({{ item.item_type }})</span></span>
+      <div class="flex gap-2 shrink-0">
+      <a href="{% if item.item_type == 'book' %}{% url 'library:read_pdf' %}?url={{ item.url|urlencode }}{% else %}{{ item.url }}{% endif %}" target="_blank" rel="noopener" class="text-sm text-brand">Open</a>
+      {% if item.item_type == 'book' %}
+      <a href="{% url 'library:read_pdf' %}?url={{ item.url|urlencode }}&disposition=attachment" rel="noopener" class="text-sm text-emerald-400" download>Download</a>
+      {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-slate-400 text-sm">No saved books yet.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2 class="text-lg font-semibold mb-4">⬇️ التحميلات</h2>
+  {% if downloads %}
+  <ul class="space-y-3" id="downloads-list">
+    {% for job in downloads %}
+    <li class="p-4 rounded-xl bg-surface-card border border-surface-border" data-job-id="{{ job.id }}">
+      <div class="flex justify-between mb-2 flex-wrap gap-2">
+        <span class="font-medium">{{ job.title }}</span>
+        <span class="text-sm job-status">{{ job.status }} — {{ job.progress_pct }}%</span>
+      </div>
+      {% if job.estimated_bytes %}
+      <p class="text-xs text-emerald-400/90 mb-2 job-estimate">حجم تقديري على القرص: {{ job.estimated_size_label_ar }}</p>
+      {% else %}
+      <p class="text-xs text-slate-500 mb-2 job-estimate" data-waiting-estimate="1">جاري تقدير الحجم…</p>
+      {% endif %}
+      {% if job.error_message %}
+      <p class="text-xs text-red-400 mb-2">{{ job.error_message|truncatechars:120 }}</p>
+      {% endif %}
+      <div class="h-2 bg-surface rounded-full overflow-hidden mb-3">
+        <div class="h-full bg-brand job-bar" style="width: {{ job.progress_pct }}%"></div>
+      </div>
+      <div class="flex flex-wrap gap-2 items-center">
+      {% if job.status == 'pending' or job.status == 'running' %}
+      <form method="post" action="{% url 'library:cancel_download' job.id %}">
+        {% csrf_token %}
+        <button type="submit" class="text-xs text-amber-400 border border-amber-700/50 rounded px-2 py-1">إلغاء التحميل</button>
+      </form>
+      {% endif %}
+      {% if job.status == 'pending' or job.status == 'cancelled' or job.status == 'failed' or job.status == 'done' %}
+      <form method="post" action="{% url 'library:delete_download' job.id %}" onsubmit="return confirm('حذف السجل والمجلد المرتبط به من القرص؟');">
+        {% csrf_token %}
+        <button type="submit" class="text-xs text-red-400 border border-red-800/50 rounded px-2 py-1">حذف من القائمة والقرص</button>
+      </form>
+      {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-slate-400 text-sm">لا توجد تحميلات — ابدأ من صفحة البحث (يتطلب yt-dlp على السيرفر).</p>
+  {% endif %}
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelectorAll('[data-job-id]').forEach((el) => {
+  const id = el.dataset.jobId;
+  const statusEl = el.querySelector('.job-status');
+  const bar = el.querySelector('.job-bar');
+  const estEl = el.querySelector('.job-estimate');
+  if (!statusEl || !bar) return;
+
+  function parseStatus(txt) {
+    return (txt.split('—')[0] || '').trim().toLowerCase();
+  }
+
+  const initial = parseStatus(statusEl.textContent);
+  if (['done', 'failed', 'cancelled'].includes(initial)) return;
+
+  const iv = setInterval(async () => {
+    try {
+      const r = await fetch('/library/download/' + id + '/status/', { credentials: 'same-origin' });
+      if (!r.ok) return;
+      const d = await r.json();
+      statusEl.textContent = d.status + ' — ' + d.progress_pct + '%';
+      bar.style.width = d.progress_pct + '%';
+      if (estEl && d.estimated_label_ar) {
+        estEl.textContent = 'حجم تقديري على القرص: ' + d.estimated_label_ar;
+        estEl.classList.remove('text-slate-500');
+        estEl.classList.add('text-emerald-400/90');
+      }
+      const st = (d.status || '').toLowerCase();
+      if (['done', 'failed', 'cancelled'].includes(st)) {
+        clearInterval(iv);
+      }
+    } catch (e) {}
+  }, 4000);
+});
+</script>
+{% endblock %}

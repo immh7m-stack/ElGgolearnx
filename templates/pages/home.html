@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}الرئيسية{% endblock %}
+{% block content %}
+<section class="text-center py-16 md:py-24">
+  <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+    ابدأ رحلتك التقنية<br>
+    <span class="bg-gradient-to-l from-brand-light to-emerald-400 bg-clip-text text-transparent">بخطوة واحدة</span>
+  </h1>
+  <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10">
+    مسارات تعليمية مكيّفة من أفضل قنوات اليوتيوب — من مستوى جونيور لسينيور — بمصادر عربية وإنجليزية موثّقة
+  </p>
+  <div class="flex flex-wrap gap-4 justify-center">
+    <a href="{% url 'roadmaps:fields' %}" class="px-8 py-3 rounded-xl bg-brand hover:bg-brand-dark font-semibold transition shadow-lg shadow-brand/25">
+      Built-in Roadmaps
+    </a>
+    <a href="{% url 'library:search' %}" class="px-8 py-3 rounded-xl border border-surface-border hover:bg-surface-card transition">
+      Search / بحث
+    </a>
+    <a href="{% url 'library:sites' %}" class="px-8 py-3 rounded-xl border border-surface-border hover:bg-surface-card transition">
+      Sites / مواقع
+    </a>
+  </div>
+</section>
+
+<section class="grid grid-cols-3 gap-6 max-w-3xl mx-auto mb-20 text-center">
+  <div class="p-6 rounded-2xl bg-surface-card border border-surface-border">
+    <p class="text-3xl font-bold text-brand">12+</p>
+    <p class="text-slate-400 text-sm mt-1">مجال تقني</p>
+  </div>
+  <div class="p-6 rounded-2xl bg-surface-card border border-surface-border">
+    <p class="text-3xl font-bold text-emerald-400">500+</p>
+    <p class="text-slate-400 text-sm mt-1">مهارة</p>
+  </div>
+  <div class="p-6 rounded-2xl bg-surface-card border border-surface-border">
+    <p class="text-3xl font-bold text-amber-400">مفتوح</p>
+    <p class="text-slate-400 text-sm mt-1">المصدر</p>
+  </div>
+</section>
+
+<section id="how" class="max-w-3xl mx-auto pb-16">
+  <h2 class="text-2xl font-bold mb-8 text-center">كيف يعمل؟</h2>
+  <div class="space-y-6">
+    <div class="flex gap-4 p-5 rounded-xl bg-surface-card border border-surface-border">
+      <span class="text-2xl">1️⃣</span>
+      <div>
+        <h3 class="font-semibold mb-1">اختر مجالك</h3>
+        <p class="text-slate-400 text-sm">Python، Frontend، ML، أمن سيبراني، والمزيد</p>
+      </div>
+    </div>
+    <div class="flex gap-4 p-5 rounded-xl bg-surface-card border border-surface-border">
+      <span class="text-2xl">2️⃣</span>
+      <div>
+        <h3 class="font-semibold mb-1">اتبع المسار</h3>
+        <p class="text-slate-400 text-sm">Junior → Mid → Senior مع كورسات يوتيوب موثّقة</p>
+      </div>
+    </div>
+    <div class="flex gap-4 p-5 rounded-xl bg-surface-card border border-surface-border">
+      <span class="text-2xl">3️⃣</span>
+      <div>
+        <h3 class="font-semibold mb-1">أكمل المشاريع</h3>
+        <p class="text-slate-400 text-sm">المقياس الحقيقي: مشاريعك على GitHub — لا ساعات فارغة</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

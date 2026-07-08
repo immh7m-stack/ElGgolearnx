@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}{{ field.name_en }} — {{ track.career_level|title }}{% endblock %}
+{% block content %}
+<nav class="text-sm text-slate-400 mb-6">
+  <a href="{% url 'roadmaps:fields' %}" class="hover:text-white">Roadmaps</a>
+  <span class="mx-2">/</span>
+  <span>{{ field.icon }} {{ field.name_en }}</span>
+  <span class="mx-2">/</span>
+  <span class="text-brand capitalize">{{ track.career_level }}</span>
+</nav>
+
+<header class="mb-8">
+  <h1 class="text-3xl font-bold capitalize">{{ field.name_en }} {{ track.career_level }} — job-ready path</h1>
+  <p class="text-slate-400 mt-2 max-w-3xl">{{ track.goal_en }}</p>
+</header>
+
+{% with ri=track.roadmap_intro %}
+{% if ri.skills_en or ri.skills_ar or ri.tips_en or ri.tips_ar %}
+<section class="mb-10 p-6 rounded-2xl bg-surface-card border border-surface-border">
+  <h2 class="font-semibold text-brand mb-2">{% if lang == 'ar' %}الوصف والملاحظات{% else %}Description &amp; notes{% endif %}</h2>
+  <p class="text-slate-500 text-sm mb-4">
+    {% if lang == 'ar' %}
+    ما يُتوقع لمطور Junior في {{ field.name_ar }} — محلياً وعالمياً (سيرة ذاتية، مقابلات، أول مشروع عملي).
+    {% else %}
+    What junior {{ field.name_en }} roles expect — locally and globally (CV, interviews, first shipping experience).
+    {% endif %}
+  </p>
+  {% if lang == 'ar' and ri.skills_ar %}
+  <h3 class="text-sm font-medium text-slate-300 mb-2">المهارات المطلوبة</h3>
+  <ul class="grid sm:grid-cols-2 gap-2 text-sm text-slate-300 mb-6">
+    {% for s in ri.skills_ar %}<li class="flex gap-2"><span class="text-emerald-400">✓</span> {{ s }}</li>{% endfor %}
+  </ul>
+  {% elif ri.skills_en %}
+  <h3 class="text-sm font-medium text-slate-300 mb-2">Core skills checklist</h3>
+  <ul class="grid sm:grid-cols-2 gap-2 text-sm text-slate-300 mb-6">
+    {% for s in ri.skills_en %}<li class="flex gap-2"><span class="text-emerald-400">✓</span> {{ s }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+  {% if lang == 'ar' and ri.tips_ar %}
+  <h3 class="text-sm font-medium text-slate-300 mb-2">نصائح توجيهية</h3>
+  <ul class="space-y-2 text-sm text-slate-400">
+    {% for t in ri.tips_ar %}<li class="flex gap-2"><span class="text-amber-400 shrink-0">💡</span> <span>{{ t }}</span></li>{% endfor %}
+  </ul>
+  {% elif ri.tips_en %}
+  <h3 class="text-sm font-medium text-slate-300 mb-2">Guidance</h3>
+  <ul class="space-y-2 text-sm text-slate-400">
+    {% for t in ri.tips_en %}<li class="flex gap-2"><span class="text-amber-400 shrink-0">💡</span> <span>{{ t }}</span></li>{% endfor %}
+  </ul>
+  {% endif %}
+</section>
+{% endif %}
+{% endwith %}
+
+{% if track.job_requirements %}
+<section class="mb-10 p-6 rounded-2xl bg-surface-card border border-brand/20">
+  <h2 class="font-semibold text-brand mb-3">What companies expect (Junior {{ field.name_en }})</h2>
+  <ul class="grid sm:grid-cols-2 gap-2 text-sm text-slate-300">
+    {% for req in track.job_requirements %}
+    <li class="flex gap-2"><span class="text-emerald-400">✓</span> {{ req }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if playlists %}
+<section class="mb-12">
+  <h2 class="text-xl font-bold mb-2">Watch these playlists in order</h2>
+  <p class="text-slate-400 text-sm mb-6">Finish all {{ playlists|length }} playlists + {{ projects|length }} GitHub projects below.</p>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    {% for pl in playlists %}
+    <article class="rounded-2xl overflow-hidden bg-surface-card border border-surface-border hover:border-brand/40 transition group">
+      <a href="{% url 'library:watch' %}?url={{ pl.youtube_url|urlencode }}&title={{ pl.title|urlencode }}&list={{ pl.playlist_id }}">
+        <div class="aspect-video bg-surface overflow-hidden">
+          {% if pl.thumbnail_url %}
+          <img src="{{ pl.thumbnail_url }}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition">
+          {% else %}
+          <div class="w-full h-full flex items-center justify-center text-3xl text-slate-600">▶</div>
+          {% endif %}
+        </div>
+      </a>
+      <div class="p-4">
+        <span class="text-xs text-brand uppercase tracking-wide">{{ pl.role_label|default:"Playlist" }}</span>
+        <h3 class="font-semibold text-sm mt-1 line-clamp-2">{{ pl.title }}</h3>
+        <p class="text-xs text-slate-500 mt-1">{{ pl.channel_name }}{% if pl.approx_views %} · {{ pl.approx_views }} views{% endif %}</p>
+        <div class="flex gap-2 mt-3 flex-wrap items-center">
+          <a href="{% url 'library:watch' %}?url={{ pl.youtube_url|urlencode }}&title={{ pl.title|urlencode }}&list={{ pl.playlist_id }}"
+             class="text-xs px-2 py-1 rounded bg-brand text-white">Watch</a>
+          <a href="{{ pl.youtube_url }}" target="_blank" rel="noopener" class="text-xs px-2 py-1 rounded border border-surface-border">YouTube</a>
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'library:save_playlist' %}" class="inline">
+            {% csrf_token %}
+            <input type="hidden" name="url" value="{{ pl.youtube_url }}">
+            <input type="hidden" name="title" value="{{ pl.title }}">
+            <input type="hidden" name="thumbnail" value="{{ pl.thumbnail_url }}">
+            <input type="hidden" name="playlist_id" value="{{ pl.playlist_id }}">
+            <button type="submit" class="text-xs px-2 py-1 rounded border border-surface-border hover:border-brand/40">Save</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<div class="flex items-center gap-4 mb-8 text-sm flex-wrap">
+  <span class="text-brand font-bold">{{ progress_pct }}%</span>
+  <span class="text-slate-400">Skills marked done in this track (manual checklist — not tied to video % watched).</span>
+  <div class="flex-1 h-2 bg-surface-card rounded-full overflow-hidden max-w-xs min-w-[8rem]">
+    <div class="h-full bg-brand" style="width:{{ progress_pct }}%"></div>
+  </div>
+</div>
+
+<div class="space-y-4 mb-12" x-data="{ open: 1 }">
+  {% for module in modules %}
+  <div class="rounded-xl bg-surface-card border border-surface-border overflow-hidden">
+    <button type="button" @click="open = open === {{ module.order_num }} ? 0 : {{ module.order_num }}"
+            class="w-full px-5 py-4 flex justify-between text-left hover:bg-white/5">
+      <span class="font-medium">{{ module.icon }} {{ module.title_en }}</span>
+      <span class="text-slate-500 text-sm">{{ module.duration_days }}d</span>
+    </button>
+    <div x-show="open === {{ module.order_num }}" class="px-5 pb-4 space-y-2 border-t border-surface-border">
+      <p class="text-sm text-slate-400 pt-3">{{ module.summary_en }}</p>
+      {% for skill in module.skills.all %}
+      <div class="flex justify-between items-center py-2 px-3 rounded-lg {% if skill.id in done_skill_ids %}bg-emerald-900/20{% else %}bg-surface{% endif %}">
+        <span class="text-sm">{{ skill.title_en }}</span>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'progress:toggle_skill' skill_id=skill.id %}">{% csrf_token %}
+          <button class="text-xs px-2 py-1 border border-surface-border rounded">{% if skill.id in done_skill_ids %}Done{% else %}Mark done{% endif %}</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<section>
+  <h2 class="text-xl font-bold mb-4">Build these {{ projects|length }} projects on GitHub</h2>
+  <p class="text-slate-400 text-sm mb-6">Each project = one repo with README. This is how you prove Junior level.</p>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for project in projects %}
+    <div class="p-5 rounded-xl bg-surface-card border border-surface-border">
+      <span class="text-xs text-slate-500">Project {{ project.order_num }}</span>
+      <h3 class="font-semibold mt-1">{{ project.title_en }}</h3>
+      <p class="text-sm text-slate-400 mt-2">{{ project.description_en }}</p>
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url 'progress:submit_project' project_id=project.id %}" class="mt-4 space-y-2">
+        {% csrf_token %}
+        <input type="url" name="github_url" placeholder="GitHub repo URL" required class="w-full text-xs px-2 py-1.5 rounded bg-surface border border-surface-border">
+        <button type="submit" class="w-full text-xs py-2 rounded bg-brand/20 text-brand">Submit project</button>
+      </form>
+      {% else %}
+      <p class="text-xs text-slate-500 mt-3"><a href="{% url 'account_login' %}" class="text-brand">Login</a> to submit</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
