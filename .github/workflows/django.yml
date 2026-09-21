@@ -1,4 +1,4 @@
-name: Django CI
+name: Django CI with PostgreSQL
 
 on:
   push:
@@ -10,11 +10,31 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: elgolearnx
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d elgolearnx"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
       SECRET_KEY: test-secret-key
       DEBUG: "True"
       ALLOWED_HOSTS: localhost,127.0.0.1,testserver
-      DATABASE_URL: sqlite:///db.sqlite3
+      DB_ENGINE: postgresql
+      DB_NAME: elgolearnx
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
       GOOGLE_CLIENT_ID: dummy-client-id
       GOOGLE_CLIENT_SECRET: dummy-client-secret
       GEMINI_API_KEY: dummy-gemini-key
@@ -38,8 +58,12 @@ jobs:
 
       - name: Run Django checks
         run: |
-          python manage.py check
+          python manage.py check --settings=config.settings.development
+
+      - name: Run migrations
+        run: |
+          python manage.py migrate --settings=config.settings.development
 
       - name: Run tests
         run: |
-          python manage.py test
+          python manage.py test --settings=config.settings.development
