@@ -16,7 +16,23 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-افتح: http://127.0.0.1:8000/
+افتح: http://127.0.0.1:8001/
+
+## التشغيل عبر Docker
+
+يمكنك استخدام إعداد Docker الموجود في `docker/docker-compose.yml` و`docker/Dockerfile` لتشغيل المشروع داخل حاوية.
+
+```bash
+docker compose -f docker/docker-compose.yml up --build
+```
+
+لمزيد من التفاصيل، راجع `docker/README.md`.
+
+لإيقاف الحاوية:
+
+```bash
+docker compose -f docker/docker-compose.yml down
+```
 
 ## الصفحات الرئيسية
 
@@ -64,3 +80,4 @@ YOUTUBE_API_KEY=...   # بحث playlists (موصى به)
 ## الترخيص
 
 مفتوح المصدر — المساهمات مرحّب بها (انظر CONTRIBUTING.md).
+# ElGgolearnx
