@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+from pathlib import Path
 
 
 class EducationalSite(models.Model):
@@ -39,6 +41,7 @@ class CuratedBook(models.Model):
     title_ar = models.CharField(max_length=300, blank=True)
     author = models.CharField(max_length=200, blank=True)
     url = models.URLField(max_length=500)
+    thumbnail = models.URLField(max_length=500, blank=True, help_text="Book cover image URL")
     is_free = models.BooleanField(default=True)
     level = models.CharField(
         max_length=20,
@@ -53,6 +56,55 @@ class CuratedBook(models.Model):
 
     def __str__(self):
         return f"{self.field_slug}: {self.title}"
+
+
+class Book(models.Model):
+    title = models.CharField(max_length=300)
+    author = models.CharField(max_length=200, blank=True)
+    description = models.TextField(blank=True)
+    cover = models.ImageField(upload_to="library/covers/", blank=True, null=True)
+    pdf_file = models.FileField(upload_to="library/books/", blank=True, null=True)
+    url = models.URLField(max_length=500, blank=True, help_text="Optional external resource URL")
+    language = models.CharField(max_length=50, blank=True)
+    category = models.CharField(max_length=100, blank=True)
+    pages = models.PositiveIntegerField(null=True, blank=True)
+    is_cached = models.BooleanField(default=False)
+    cached_at = models.DateTimeField(null=True, blank=True)
+    last_accessed = models.DateTimeField(null=True, blank=True)
+    cache_size = models.PositiveBigIntegerField(default=0)
+    cache_expires_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at", "title"]
+
+    def __str__(self):
+        return self.title
+
+    def cache_path(self) -> str:
+        if not self.pk:
+            return ""
+        filename = f"book_cache_{self.pk}.pdf"
+        return str(Path(settings.BOOK_CACHE_PATH) / filename)
+
+    def cache_exists(self) -> bool:
+        return bool(self.cache_path() and Path(self.cache_path()).is_file())
+
+    def mark_cached(self, file_size: int):
+        self.is_cached = True
+        self.cached_at = timezone.now()
+        self.cache_size = file_size
+        self.cache_expires_at = timezone.now() + settings.BOOK_CACHE_TTL
+        self.save(update_fields=["is_cached", "cached_at", "cache_size", "cache_expires_at"])
+
+    def mark_cache_removed(self):
+        self.is_cached = False
+        self.cached_at = None
+        self.cache_size = 0
+        self.cache_expires_at = None
+        self.save(update_fields=["is_cached", "cached_at", "cache_size", "cache_expires_at"])
 
 
 class UserPlaylist(models.Model):

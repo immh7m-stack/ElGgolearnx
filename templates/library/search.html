@@ -8,7 +8,7 @@
     <p class="text-slate-400">YouTube playlists (sorted by views) · open-source books · watch here or download</p>
   </div>
 
-  <form method="get" class="w-full max-w-2xl mb-6">
+  <form method="get" class="w-full max-w-2xl mb-4" onsubmit="const btn=this.querySelector('button[type=submit]'); if(btn){btn.disabled=true; btn.textContent='جاري البحث...';} document.getElementById('search-loading').classList.remove('hidden');">
     <div class="flex rounded-2xl overflow-hidden shadow-xl shadow-black/30 border border-surface-border bg-surface-card">
       <input type="search" name="q" value="{{ query }}" autofocus required
              placeholder="Python, React, cybersecurity..."
@@ -21,6 +21,34 @@
       <button type="submit" class="px-8 bg-brand hover:bg-brand-dark font-semibold transition">Search</button>
     </div>
   </form>
+  <div id="search-loading" class="hidden w-full max-w-2xl mb-6 rounded-2xl border border-surface-border bg-surface-card px-6 py-5 text-sm text-slate-400 flex items-center gap-3">
+    <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+    جاري البحث الآن... انتظر لحظة واحدة فقط
+  </div>
+
+  {% if query and recommended_sites %}
+  <div class="w-full max-w-6xl mb-8">
+    <h2 class="text-lg font-semibold mb-4 text-slate-300">أهم المواقع لموضوع البحث</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for site in recommended_sites %}
+      <article class="p-4 rounded-2xl bg-surface-card border border-surface-border hover:border-brand/50 transition">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">{{ site.icon }}</span>
+          <div>
+            <h3 class="font-semibold text-sm">{{ site.name_ar|default:site.name }}</h3>
+            <p class="text-xs text-slate-400 mt-1">{{ site.get_category_display }}</p>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500 mt-3 line-clamp-3">{{ site.description_ar|default:site.description_en }}</p>
+        <div class="mt-4 flex flex-wrap gap-2 text-xs">
+          <span class="px-2 py-1 rounded-md {% if site.is_free %}bg-emerald-900/20 text-emerald-200{% else %}bg-amber-900/20 text-amber-200{% endif %}">{% if site.is_free %}مجاناً{% else %}مدفوع{% endif %}</span>
+          <a href="{{ site.url }}" target="_blank" rel="noopener" class="px-2 py-1 rounded-md border border-surface-border text-slate-200">زيارة</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 
   {% if not query %}
   <div class="flex flex-wrap gap-2 justify-center max-w-2xl">
@@ -79,34 +107,73 @@
   </div>
   {% endif %}
 
-  {% if query and book_results %}
-  <div class="w-full max-w-4xl mt-12">
-    <h2 class="text-lg font-semibold mb-6 text-slate-300">Free books & PDFs (open source)</h2>
-    <div class="grid sm:grid-cols-2 gap-4">
-      {% for book in book_results %}
-      <div class="p-4 rounded-xl bg-surface-card border border-surface-border hover:border-brand/30 transition">
-        <h3 class="font-medium text-sm">{{ book.title }}</h3>
-        <p class="text-xs text-slate-500 mt-1">{{ book.author }} · {{ book.source }}</p>
-        <div class="flex flex-wrap gap-2 mt-3">
-          <a href="{% url 'library:read_pdf' %}?url={{ book.url|urlencode }}" target="_blank" rel="noopener"
-             class="text-xs px-3 py-1.5 rounded-md bg-brand/20 text-brand">معاينة</a>
-          <a href="{% url 'library:read_pdf' %}?url={{ book.url|urlencode }}&disposition=attachment" rel="noopener"
-             class="text-xs px-3 py-1.5 rounded-md border border-surface-border text-emerald-300 border-emerald-800/40" download>تحميل PDF</a>
-          <form method="post" action="{% url 'library:save_book' %}">
-            {% csrf_token %}
-            <input type="hidden" name="title" value="{{ book.title }}">
-            <input type="hidden" name="url" value="{{ book.url }}">
-            <button type="submit" class="text-xs px-3 py-1.5 rounded-md border border-surface-border">Save</button>
-          </form>
-        </div>
+  {% if query and grouped_book_results %}
+  <div class="w-full max-w-6xl mt-12">
+    <h2 class="text-lg font-semibold mb-6 text-slate-300">نتائج الكتب</h2>
+    {% for group in grouped_book_results %}
+    <div class="mb-10">
+      <div class="mb-4 flex items-center justify-between gap-4">
+        <h3 class="text-base font-semibold text-slate-100">{{ group.source }}</h3>
+        <span class="text-xs text-slate-400">{{ group.books|length }} نتيجة</span>
       </div>
-      {% endfor %}
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {% for book in group.books %}
+        <article class="group rounded-2xl overflow-hidden bg-surface-card border border-surface-border hover:border-brand/50 hover:shadow-lg hover:shadow-brand/10 transition">
+          <a href="{% if book.viewer_type == 'google_books' %}{% url 'library:google_books_viewer' %}?url={{ book.url|urlencode }}&title={{ book.title|urlencode }}{% elif book.viewer_type in 'pdf archive' %}{% if book.book_id %}{% url 'library:read_book' %}?book_id={{ book.book_id }}&title={{ book.title|urlencode }}&is_pdf=1{% else %}{% url 'library:read_book' %}?url={{ book.pdf_url|urlencode }}&title={{ book.title|urlencode }}&is_pdf=1{% endif %}{% else %}{{ book.url }}{% endif %}" class="block">
+            <div class="aspect-video bg-surface relative overflow-hidden">
+              {% if book.cover_url %}
+              <img src="{{ book.cover_url }}" alt="Cover for {{ book.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+              {% else %}
+              <div class="w-full h-full flex items-center justify-center bg-surface-border text-slate-500">No cover</div>
+              {% endif %}
+            </div>
+          </a>
+          <div class="p-4">
+            <h3 class="font-semibold text-sm line-clamp-2 leading-snug">{{ book.title }}</h3>
+            <p class="text-xs text-slate-500 mt-2">{{ book.author }} · {{ book.source }}</p>
+            {% if book.language or book.category or book.pages %}
+            <p class="text-xs text-slate-400 mt-2">{{ book.language }}{% if book.language and book.category %} · {% endif %}{{ book.category }}{% if book.pages %} · {{ book.pages }} صفحة{% endif %}</p>
+            {% endif %}
+            {% if book.description %}
+            <p class="text-xs text-slate-500 mt-3 line-clamp-3">{{ book.description }}</p>
+            {% endif %}
+            <div class="flex flex-wrap gap-2 mt-4">
+              {% if book.viewer_type == 'pdf' %}
+                {% if book.book_id %}
+                  <a href="{% url 'library:read_book' %}?book_id={{ book.book_id }}&title={{ book.title|urlencode }}&is_pdf=1" class="text-xs px-3 py-1.5 rounded-md bg-brand/20 text-brand">معاينة</a>
+                {% else %}
+                  <a href="{% url 'library:read_book' %}?url={{ book.pdf_url|urlencode }}&title={{ book.title|urlencode }}&is_pdf=1" class="text-xs px-3 py-1.5 rounded-md bg-brand/20 text-brand">معاينة</a>
+                {% endif %}
+                <a href="{{ book.pdf_url }}" rel="noopener" class="text-xs px-3 py-1.5 rounded-md border border-surface-border text-emerald-300 border-emerald-800/40" download>تحميل</a>
+              {% elif book.viewer_type == 'google_books' %}
+                <a href="{% url 'library:google_books_viewer' %}?url={{ book.preview_url|default:book.url|urlencode }}&title={{ book.title|urlencode }}" class="text-xs px-3 py-1.5 rounded-md bg-brand/20 text-brand">معاينة</a>
+                <a href="{% url 'library:read_book' %}?url={{ book.preview_url|default:book.url|urlencode }}&title={{ book.title|urlencode }}&is_pdf=0" class="text-xs px-3 py-1.5 rounded-md border border-surface-border text-emerald-300 border-emerald-800/40">قراءة PDF</a>
+              {% elif book.viewer_type == 'archive' %}
+                <a href="{% url 'library:read_book' %}?url={{ book.url|urlencode }}&title={{ book.title|urlencode }}&is_pdf=1" class="text-xs px-3 py-1.5 rounded-md bg-brand/20 text-brand">معاينة</a>
+                <a href="{{ book.url }}" rel="noopener" class="text-xs px-3 py-1.5 rounded-md border border-surface-border text-emerald-300 border-emerald-800/40" download>تحميل</a>
+              {% elif book.viewer_type == 'external' or book.viewer_type == 'openlibrary' or book.viewer_type == 'doi' %}
+                <a href="{{ book.url }}" target="_blank" rel="noopener" class="text-xs px-3 py-1.5 rounded-md bg-brand/20 text-brand">فتح المصدر</a>
+              {% else %}
+                <span class="text-xs px-3 py-1.5 rounded-md border border-surface-border text-slate-300">لا يوجد PDF</span>
+              {% endif %}
+            </div>
+            <form method="post" action="{% url 'library:save_book' %}" class="mt-3">
+              {% csrf_token %}
+              <input type="hidden" name="title" value="{{ book.title }}">
+              <input type="hidden" name="url" value="{{ book.url }}">
+              <button type="submit" class="text-xs px-3 py-1.5 rounded-md border border-surface-border">Save</button>
+            </form>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
     </div>
+    {% endfor %}
   </div>
   {% endif %}
 
   {% if query and not playlists and not book_results %}
-  <p class="text-slate-500 mt-8">No results. Check YOUTUBE_API_KEY in api.env or try another keyword.</p>
+  <p class="text-slate-500 mt-8">No results found. حاول تبحث بكلمة أخرى أو اختار بحث الكتب.</p>
   {% endif %}
 </section>
 {% endblock %}

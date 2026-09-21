@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Monitoring Dashboard{% endblock %}
+
+{% block content %}
+<div class="p-6">
+  <h1 class="text-2xl font-bold mb-4">Monitoring Dashboard</h1>
+  <p class="mb-4">اضغط زر البدء لتشغيل التتبع في الخلفية.</p>
+
+  <button id="monitoring-start" class="rounded-xl bg-brand px-4 py-2 text-white">ابدأ التتبع</button>
+  <button id="monitoring-stop" class="rounded-xl bg-rose-500 px-4 py-2 text-white ml-3">أوقف التتبع</button>
+
+  <div id="monitoring-status" class="mt-5 text-sm text-slate-400">حالة التتبع: متوقف</div>
+  <video id="monitoring-video" autoplay muted playsinline class="mt-4 w-full max-w-lg rounded-xl border border-surface-border hidden"></video>
+</div>
+
+<script>
+(function() {
+  const startBtn = document.getElementById('monitoring-start');
+  const stopBtn = document.getElementById('monitoring-stop');
+  const statusEl = document.getElementById('monitoring-status');
+  const videoEl = document.getElementById('monitoring-video');
+  let stream = null;
+  let intervalId = null;
+  let sessionId = Date.now().toString();
+
+  async function sendFrame() {
+    if (!videoEl.videoWidth) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 240;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+    const imageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+    await fetch('/monitoring/analyze/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ image_base64: imageBase64, session_id: sessionId, timestamp: new Date().toISOString() })
+    });
+  }
+
+  async function startMonitoring() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoEl.srcObject = stream;
+      videoEl.classList.remove('hidden');
+      statusEl.textContent = 'حالة التتبع: جاري التشغيل';
+      intervalId = setInterval(sendFrame, 1500);
+    } catch (error) {
+      statusEl.textContent = 'تعذر الوصول إلى الكاميرا';
+    }
+  }
+
+  function stopMonitoring() {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      stream = null;
+    }
+    videoEl.classList.add('hidden');
+    statusEl.textContent = 'حالة التتبع: متوقف';
+  }
+
+  startBtn.addEventListener('click', startMonitoring);
+  stopBtn.addEventListener('click', stopMonitoring);
+})();
+</script>
+{% endblock %}

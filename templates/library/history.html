@@ -4,7 +4,7 @@
 <h1 class="text-3xl font-bold mb-2">سجل قوائم التشغيل</h1>
 <p class="text-slate-400 text-sm mb-8">القوائم التي فتحتها أو حفظتها تظهر هنا — دون سجل بحث نصي.</p>
 
-{% if playlists %}
+{% if playlists or book_items %}
 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
   {% for pl in playlists %}
   <a href="{% url 'library:watch' %}?url={{ pl.youtube_url|urlencode }}&title={{ pl.title|urlencode }}&list={{ pl.playlist_id }}"
@@ -22,8 +22,24 @@
     </div>
   </a>
   {% endfor %}
+  {% for item in book_items %}
+  <div class="rounded-xl overflow-hidden bg-surface-card border border-surface-border hover:border-brand/40">
+    <a href="{% url 'library:read_book' %}?url={{ item.url|urlencode }}&title={{ item.title|urlencode }}" rel="noopener"
+       class="block p-3 flex justify-between items-start gap-2">
+      <div class="flex-1">
+        <p class="text-sm font-medium line-clamp-2">{{ item.title }}</p>
+        <p class="text-xs text-slate-500 mt-1">كتاب مفتوح داخل التطبيق</p>
+      </div>
+      <span class="text-[10px] uppercase tracking-wide text-slate-500 whitespace-nowrap">كتاب</span>
+    </a>
+    <div class="border-t border-surface-border px-3 py-2">
+      <a href="{% url 'library:read_book' %}?url={{ item.url|urlencode }}&title={{ item.title|urlencode }}"
+         class="text-xs px-3 py-1 rounded-md bg-brand text-white">Read online</a>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% else %}
-<p class="text-slate-400 text-sm">لم تفتح أي قائمة بعد. ابحث عن كورس أو افتح مساراً من Roadmaps.</p>
+<p class="text-slate-400 text-sm">لم تفتح أي كتاب أو قائمة بعد. ابحث عن كتب أو قوائم وشغّلها لتظهر هنا.</p>
 {% endif %}
 {% endblock %}

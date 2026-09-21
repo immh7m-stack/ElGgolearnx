@@ -5,6 +5,7 @@
       <span class="hidden sm:inline bg-gradient-to-l from-brand-light to-brand bg-clip-text text-transparent">ElGgolearn</span>
     </a>
     <div class="flex items-center gap-1 sm:gap-3 text-xs sm:text-sm overflow-x-auto">
+      <a href="{% url 'home' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">الرئيسية</a>
       <a href="{% url 'roadmaps:fields' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">Roadmaps</a>
       <a href="{% url 'library:search' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">Search</a>
       <a href="{% url 'library:sites' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">Sites</a>
@@ -13,6 +14,7 @@
       <a href="{% url 'library:my_library' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">Library</a>
       <a href="{% url 'library:history' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">History</a>
       <a href="{% url 'progress:dashboard' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">Dashboard</a>
+      <a href="{% url 'accounts:profile' %}" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white whitespace-nowrap">الملف الشخصي</a>
       <a href="{% url 'account_logout' %}" class="px-2 py-1 rounded-lg border border-surface-border whitespace-nowrap">Logout</a>
       {% else %}
       <a href="{% url 'account_login' %}" class="px-2 py-1 text-slate-300 whitespace-nowrap">Login</a>

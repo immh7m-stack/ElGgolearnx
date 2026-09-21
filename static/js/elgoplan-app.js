@@ -23,7 +23,7 @@ const C = {
 
 const PREFIX = 'elgoplan_v1_';
 
-/** Ready for future POST /api/plan/state/ — today uses localStorage only */
+/** Storage + API hybrid: localStorage for offline, sync with backend when available */
 const ElGoStorage = {
   get(key, fallback) {
     try {
@@ -43,6 +43,124 @@ const ElGoStorage = {
   async syncToBackend(_url, _payload) {
     // Reserved: await fetch('/api/plan/state/', { method: 'POST', headers: { 'X-CSRFToken': ... }, body: JSON.stringify(...) })
     return null;
+  },
+};
+
+/** Task API — CRUD operations with database sync */
+const TaskAPI = {
+  getCsrf() {
+    const c = document.cookie.match(/csrftoken=([^;]+)/);
+    return c ? c[1] : '';
+  },
+
+  async list() {
+    try {
+      const res = await fetch('/api/plan/tasks/', { credentials: 'same-origin' });
+      if (!res.ok) return [];
+      return await res.json();
+    } catch (e) {
+      console.error('[ElGoPlan] task list failed:', e);
+      return ElGoStorage.get('tasks', []);
+    }
+  },
+
+  async create(task) {
+    try {
+      const res = await fetch('/api/plan/tasks/', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.getCsrf(),
+        },
+        body: JSON.stringify(task),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const saved = await res.json();
+      return saved;
+    } catch (e) {
+      console.error('[ElGoPlan] task create failed:', e);
+      const offline = { id: uid(), ...task, created_at: new Date().toISOString() };
+      const local = ElGoStorage.get('tasks', []);
+      local.push(offline);
+      ElGoStorage.set('tasks', local);
+      return offline;
+    }
+  },
+
+  async update(id, patch) {
+    try {
+      const res = await fetch('/api/plan/tasks/' + id + '/', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': this.getCsrf(),
+        },
+        body: JSON.stringify(patch),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch (e) {
+      console.error('[ElGoPlan] task update failed:', e);
+      const local = ElGoStorage.get('tasks', []);
+      const idx = local.findIndex(t => t.id === id);
+      if (idx >= 0) {
+        local[idx] = { ...local[idx], ...patch, updated_at: new Date().toISOString() };
+        ElGoStorage.set('tasks', local);
+        return local[idx];
+      }
+      return null;
+    }
+  },
+
+  async delete(id) {
+    try {
+      const res = await fetch('/api/plan/tasks/' + id + '/', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        headers: { 'X-CSRFToken': this.getCsrf() },
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return true;
+    } catch (e) {
+      console.error('[ElGoPlan] task delete failed:', e);
+      const local = ElGoStorage.get('tasks', []);
+      const idx = local.findIndex(t => t.id === id);
+      if (idx >= 0) {
+        local.splice(idx, 1);
+        ElGoStorage.set('tasks', local);
+        return true;
+      }
+      return false;
+    }
+  },
+
+  async toggle(id) {
+    try {
+      const res = await fetch('/api/plan/tasks/' + id + '/toggle/', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'X-CSRFToken': this.getCsrf() },
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch (e) {
+      console.error('[ElGoPlan] task toggle failed:', e);
+      const local = ElGoStorage.get('tasks', []);
+      const task = local.find(t => t.id === id);
+      if (task) {
+        task.is_completed = !task.is_completed;
+        if (task.is_completed) {
+          task.completed_at = new Date().toISOString();
+        } else {
+          task.completed_at = null;
+        }
+        ElGoStorage.set('tasks', local);
+        return task;
+      }
+      return null;
+    }
   },
 };
 
@@ -172,6 +290,16 @@ function GoalsSection() {
     ElGoStorage.set('goals', goals);
   }, [goals]);
 
+  // Load tasks from backend API on mount
+  useEffect(() => {
+    TaskAPI.list().then(tasks => {
+      if (tasks && tasks.length > 0) {
+        // Store tasks in localStorage for quick access
+        ElGoStorage.set('tasks', tasks);
+      }
+    }).catch(e => console.error('[ElGoPlan] failed to load tasks from API', e));
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     setErr('');
@@ -261,6 +389,7 @@ function GoalsSection() {
   const addTask = (gid, mid, text) => {
     const t = text.trim();
     if (!t) return;
+    const newTaskId = uid();
     setGoals((gs) =>
       gs.map((g) =>
         g.id !== gid
@@ -268,11 +397,20 @@ function GoalsSection() {
           : {
               ...g,
               months: g.months.map((m) =>
-                m.id !== mid ? m : { ...m, tasks: [...m.tasks, { id: uid(), label: t, done: false, source: 'manual' }] }
+                m.id !== mid ? m : { ...m, tasks: [...m.tasks, { id: newTaskId, label: t, done: false, source: 'manual' }] }
               ),
             }
       )
     );
+    // Sync to API
+    TaskAPI.create({
+      title: t,
+      description: '',
+      is_completed: false,
+      target_date: todayLocal(),
+      category: 'مهام عامة',
+      mood: 2,
+    }).catch(e => console.error('[ElGoPlan] task create sync failed', e));
   };
 
   return html`
@@ -499,11 +637,21 @@ function JournalSection() {
   const addTask = () => {
     const t = taskInput.trim();
     if (!t) return;
+    const taskId = uid();
     setEntry(selectedDate, (ex) => ({
       ...ex,
-      tasks: [...ex.tasks, { id: uid(), label: t, done: false }],
+      tasks: [...ex.tasks, { id: taskId, label: t, done: false }],
     }));
     setTaskInput('');
+    // Sync to API
+    TaskAPI.create({
+      title: t,
+      description: '',
+      is_completed: false,
+      target_date: selectedDate,
+      category: 'مهام يومية',
+      mood: entry.mood || 2,
+    }).catch(e => console.error('[ElGoPlan] daily task create sync failed', e));
   };
 
   const toggleTask = (tid) =>

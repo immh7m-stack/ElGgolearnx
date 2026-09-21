@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EL GoLearn - إنشاء حساب / تسجيل الدخول</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="{% static 'css/auth-style.css' %}" />
+</head>
+<body>
+
+  <div class="auth-container">
+    
+    <!-- القسم الأيمن (في RTL): المجسم الجيومترية والمنحنيات المتحركة والشعار البارز -->
+    <div class="visual-side">
+      <div class="mesh-glow-bg"></div>
+      <!-- كانفاس العقد والمنحنيات الانسيابية التفاعلية -->
+      <canvas id="mesh-canvas"></canvas>
+      
+      <!-- شعار GoLearn البارز والتنفيذي في منتصف الجانب البصري -->
+      <div class="hero-brand-centerpiece">
+        <div class="brand-logo-wrapper hero-logo">
+          <svg class="brand-brain-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGradHero" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="50%" stop-color="#cbd5e1" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+              <linearGradient id="arrowGradHero" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#0284c7" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="44" stroke="url(#logoGradHero)" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.5" />
+            <path d="M35 38C30 38 26 42 26 47C26 50 28 53 31 54C28 56 26 60 26 64C26 70 31 75 37 75C41 75 44 73 46 70C48 73 51 75 55 75C62 75 67 70 67 63C67 59 65 56 62 54C65 52 67 48 67 44C67 38 61 33 54 33C50 33 46 35 44 38C42 35 38 38 35 38Z" stroke="url(#logoGradHero)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <path d="M36 48C40 48 44 46 44 42" stroke="url(#logoGradHero)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M48 58C52 58 56 55 56 50" stroke="url(#logoGradHero)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M22 68C24 40 45 22 72 22M72 22V32M72 22H62" stroke="url(#arrowGradHero)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <h2 class="hero-brand-name">EL GoLearn</h2>
+      </div>
+    </div>
+
+    <!-- القسم الأيسر (في RTL): كارت نموذج الإدخال الكلين المنسق -->
+    <div class="auth-side">
+      <div class="circuit-bg-glow"></div>
+      
+      <div class="auth-card">
+        <!-- عنوان النموذج -->
+        <h1 class="auth-title" id="auth-title">Welcome in EL GoLearn</h1>
+
+        <!-- نموذج الإدخال -->
+        <form id="auth-form" onsubmit="handleFormSubmit(event)">
+          
+          <!-- حقل بريد المستخدم -->
+          <div class="form-group">
+            <label for="email" class="form-label">ادخال اميل المستخدم</label>
+            <div class="input-wrapper">
+              <input type="email" id="email" required placeholder="ادخل بريدك الإلكتروني" autocomplete="email" />
+            </div>
+          </div>
+
+          <!-- حقل كلمة السر -->
+          <div class="form-group">
+            <label for="password" class="form-label">كلمه السر</label>
+            <div class="input-wrapper">
+              <input type="password" id="password" required placeholder="كلمه السر" autocomplete="new-password" />
+              <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', this)" title="إظهار/إخفاء كلمة السر">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <!-- حقل تأكيد كلمة السر -->
+          <div class="form-group" id="confirm-password-group">
+            <label for="confirm-password" class="form-label">كلمه السر مجددا</label>
+            <div class="input-wrapper">
+              <input type="password" id="confirm-password" placeholder="كلمه السر" autocomplete="new-password" />
+              <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm-password', this)" title="إظهار/إخفاء كلمة السر">
+                👁️
+              </button>
+            </div>
+          </div>
+
+          <!-- فاصل التسجيل عبر الخدمات -->
+          <div class="divider">
+            <span>أو قم بالتسجيل عبر:</span>
+          </div>
+
+          <!-- زر Google -->
+          <div class="social-login">
+            <a href="{% provider_login_url 'google' %}" class="google-btn">
+              <img class="google-icon" src="https://www.svgrepo.com/show/355037/google.svg" alt="Google">
+            </a>
+          </div>
+
+          <!-- زر الإرسال -->
+          <button type="submit" class="submit-btn" id="submit-btn">
+            <span>إنشاء حساب</span>
+          </button>
+
+        </form>
+
+        <!-- التبديل بين إنشاء حساب وتسجيل الدخول -->
+        <div class="auth-switch">
+          <span id="switch-prompt">لديك حساب بالفعل؟</span>
+          <a href="#" id="switch-link" onclick="toggleAuthMode(event)">تسجيل الدخول</a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="{% static 'js/auth-script.js' %}"></script>
+</body>
+</html>

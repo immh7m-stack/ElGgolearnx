@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
+    path("", TemplateView.as_view(template_name="splash/splash.html"), name="splash"),
     path("accounts/", include("apps.accounts.urls")),
     path("fields/", include("apps.roadmaps.urls")),
     path("library/", include("apps.library.urls")),
@@ -16,7 +17,10 @@ urlpatterns = [
     path("api/", include("apps.progress.api_urls")),
     path("api/", include("apps.chatbot.api_urls")),
     path("api/", include("apps.accounts.api_urls")),
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path("api/", include("apps.quizzes.api_urls")),
+    path("quizzes/", include("apps.quizzes.urls")),
+    path("monitoring/", include("apps.monitoring.urls")),
+    path("home/", TemplateView.as_view(template_name="pages/home.html"), name="home"),
 ]
 
 if settings.DEBUG:

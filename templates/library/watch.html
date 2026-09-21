@@ -3,7 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 {% block main_class %}max-w-full px-0 py-0{% endblock %}
 {% block content %}
-<div class="flex flex-col h-[calc(100vh-4rem)]">
+<div class="flex flex-col min-h-[calc(100vh-4rem)]">
   <div class="px-4 py-3 border-b border-surface-border bg-surface-card flex items-center gap-4 flex-wrap">
     <a href="javascript:history.back()" class="text-brand text-sm">← Back</a>
     <h1 class="text-sm font-medium truncate flex-1">{{ title }}</h1>
@@ -11,47 +11,122 @@
     <a href="{{ playlist_url }}" target="_blank" rel="noopener" class="text-xs text-red-400">Open playlist on YouTube</a>
     {% endif %}
   </div>
-  <div class="flex flex-1 flex-col lg:flex-row overflow-hidden">
-    <div class="flex-1 bg-black flex flex-col items-center justify-center p-4 min-h-[280px] gap-3">
-      {% if videos %}
+  <div class="flex flex-1 flex-col lg:flex-row overflow-visible min-h-0">
+    <div class="flex-1 bg-black flex flex-col min-h-0 items-center justify-start p-4 gap-3 relative">
+      {% if videos or first_video_id %}
       <p class="text-slate-500 text-xs text-center max-w-xl leading-relaxed">
         إذا ظهر «Video unavailable» أو منع التشغيل خارج يوتيوب، استخدم الزر أدناه أو «Open playlist on YouTube».
       </p>
       <div id="watch-player-root"
            class="relative w-full aspect-video max-h-[65vh] rounded-lg overflow-hidden bg-black border border-surface-border"
-           data-first-video="{{ videos.0.video_id }}">
+           data-first-video="{{ first_video_id }}">
         <div id="watch-yt-player" class="absolute inset-0 w-full h-full"></div>
         <div id="yt-embed-fallback"
              class="hidden absolute inset-0 flex flex-col items-center justify-center gap-4 bg-surface-card/95 p-6 text-center z-10">
           <p class="text-slate-200 text-sm font-medium">التضمين معطّل من صاحب الفيديو على المواقع الأخرى.</p>
-          <a id="yt-watch-direct" href="https://www.youtube.com/watch?v={{ videos.0.video_id }}"
+          <a id="yt-watch-direct" href="https://www.youtube.com/watch?v={{ first_video_id }}"
              target="_blank" rel="noopener"
              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold">
             مشاهدة على يوتيوب
           </a>
         </div>
       </div>
+      <div id="quiz-overlay" class="pointer-events-auto absolute top-4 right-4 z-50 w-[min(420px,calc(100%-1rem))] max-h-[calc(80vh-2rem)] overflow-visible rounded-3xl border border-slate-800 bg-slate-950/95 shadow-[0_0_40px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+        <div id="quiz-overlay-header" class="pointer-events-auto flex cursor-move items-start justify-between gap-3 border-b border-slate-800 px-4 py-3">
+          <div>
+            <p class="text-sm font-semibold text-white">اختبار الفيديو العائم</p>
+            <p class="text-xs text-slate-400">اسحب النافذة أو اضغط على رمز التكبير.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="fullscreen-quiz-overlay-btn" type="button" data-overlay-action="fullscreen" class="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-slate-200 hover:bg-slate-700">⤢</button>
+            <button id="minimize-quiz-overlay-btn" type="button" data-overlay-action="minimize" class="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-slate-200 hover:bg-slate-700">—</button>
+            <button id="close-quiz-overlay-btn" type="button" data-overlay-action="close" class="rounded-full bg-slate-800 px-3 py-1 text-sm font-semibold text-slate-200 hover:bg-slate-700">×</button>
+          </div>
+        </div>
+        <div id="quiz-overlay-status" class="px-4 py-3 text-sm text-slate-200">انتظر تحميل الاختبار...</div>
+        <div id="quiz-overlay-history" class="space-y-2 border-t border-slate-800 px-4 py-3 text-sm text-slate-300">
+          {% if attempts %}
+          <div class="text-xs uppercase tracking-[0.16em] text-slate-500">آخر المحاولات</div>
+          <div class="grid gap-2">
+            {% for attempt in attempts %}
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/80 px-3 py-2 flex items-center justify-between gap-2 text-xs text-slate-200">
+              <span>نتيجة {{ attempt.score|floatformat:0 }}%</span>
+              <span class="text-slate-400">{{ attempt.completed_at|date:"M d" }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/80 px-3 py-2 text-slate-400">لم يتم تسجيل أي محاولة بعد.</div>
+          {% endif %}
+        </div>
+        <div id="quiz-overlay-panel" class="space-y-3 overflow-y-auto min-h-0 px-4 pb-4 pt-2" style="max-height: calc(80vh - 212px); min-height: 0;"></div>
+        <div id="quiz-overlay-footer" class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-800 bg-slate-950/90 px-4 py-3">
+          <div class="flex flex-wrap gap-2">
+            <button id="load-overlay-quizzes-btn" type="button" data-overlay-action="load-all" class="rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-brand/40">تحميل الاختبارات</button>
+            <button id="load-overlay-segment-btn" type="button" data-overlay-action="load-segment" class="rounded-xl border border-emerald-700/40 bg-emerald-900/20 px-3 py-2 text-sm text-emerald-300 hover:border-emerald-500/40">اختبار الجزء الحالي</button>
+            <button id="open-full-quiz-page-btn" type="button" data-overlay-action="open-full" class="rounded-xl bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-brand-dark">فتح الصفحة الكاملة</button>
+          </div>
+          <button id="refresh-quiz-overlay-btn" type="button" class="rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-brand/40">تحديث الأسئلة</button>
+        </div>
+      </div>
+      <section class="w-full max-w-4xl rounded-[28px] border border-surface-border/70 bg-gradient-to-br from-slate-950/95 via-slate-900/90 to-surface-card/95 p-4 md:p-5 shadow-[0_0_40px_rgba(0,0,0,0.2)]">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs font-medium text-brand">🤖 اختبارات ذكية</div>
+            <h2 class="text-lg font-semibold text-white">اختبارات الفيديو المباشرة</h2>
+            <p class="text-sm text-slate-400">اسحب الأسئلة إلى سياق الجزء الذي تشاهده الآن، ثم انتقل إلى الاختبار الكامل عند الحاجة.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="open-quiz-overlay-btn" type="button" class="rounded-xl border border-brand/40 bg-brand/15 px-3 py-2 text-sm text-brand hover:bg-brand/25 transition">
+              فتح الشاشة العائمة
+            </button>
+          </div>
+        </div>
+        <div class="mb-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-3">
+          <div class="mb-3 flex items-center justify-between gap-2">
+            <h3 class="text-sm font-semibold text-white">نظرة سريعة</h3>
+            <span class="rounded-full border border-brand/30 bg-brand/10 px-2.5 py-1 text-[11px] text-brand">متجاوب مع الفيديو</span>
+          </div>
+          <div class="grid gap-2 text-sm text-slate-300 md:grid-cols-3">
+            <div class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2"><span class="text-brand">●</span><span>أسئلة دقيقة مرتبطة باللحظة الحالية</span></div>
+            <div class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2"><span class="text-emerald-400">●</span><span>اختبار نهائي للمفاهيم الكبرى</span></div>
+            <div class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2"><span class="text-amber-400">●</span><span>نتيجة مباشرة تُحفظ في لوحة التقدم</span></div>
+          </div>
+        </div>
+        <div id="quiz-status" class="mb-3 rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-2 text-sm text-slate-400">سيتم تحميل الأسئلة تلقائيًا عند فتح هذه الميزة.</div>
+        <div id="quiz-panel" class="space-y-4"></div>
+      </section>
       {% elif hero_thumb %}
       <img src="{{ hero_thumb }}" alt="" class="max-h-48 rounded-lg opacity-50">
       <p class="text-slate-400 mt-4 text-sm">Loading videos… or open on YouTube.</p>
       {% endif %}
     </div>
-    <aside class="w-full lg:w-80 border-t lg:border-t-0 lg:border-r border-surface-border overflow-y-auto bg-surface-card">
-      <p class="p-3 text-xs text-slate-500 border-b border-surface-border">{{ videos|length }} lessons</p>
-      <ul class="divide-y divide-surface-border">
+    <aside class="w-full lg:w-80 border-t lg:border-t-0 lg:border-r border-surface-border overflow-y-auto bg-gradient-to-b from-slate-950/90 via-slate-900/90 to-surface-card">
+      <div class="border-b border-surface-border/70 bg-slate-950/60 p-3">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <p class="text-[11px] uppercase tracking-[0.24em] text-slate-500">قائمة الدروس</p>
+            <p class="text-sm font-semibold text-white">{{ videos|length }} درسًا متاحًا</p>
+          </div>
+          <span class="rounded-full border border-brand/30 bg-brand/10 px-2.5 py-1 text-[11px] text-brand">مكتمل</span>
+        </div>
+      </div>
+      <ul class="divide-y divide-surface-border/70">
         {% for v in videos %}
-        <li class="flex gap-2 p-2 hover:bg-surface/50">
-          <button type="button" onclick="playYt('{{ v.video_id }}')"
-                  class="flex gap-2 w-full text-left items-center">
-            <img src="{{ v.thumbnail }}" alt="" class="w-20 h-12 object-cover rounded shrink-0" loading="lazy">
-            <span class="text-xs line-clamp-2">{{ v.title }}</span>
-          </button>
-          <form method="post" action="{% url 'library:start_download' %}" class="shrink-0 self-center">
-            {% csrf_token %}
-            <input type="hidden" name="video_id" value="{{ v.video_id }}">
-            <input type="hidden" name="video_title" value="{{ v.title }}">
-            <button type="submit" title="Download this video" class="text-xs px-2 py-1 border border-surface-border rounded">⬇</button>
-          </form>
+        <li class="group p-2 transition hover:bg-slate-800/50">
+          <div class="flex gap-2">
+            <button type="button" onclick="playYt('{{ v.video_id }}')"
+                    class="flex gap-2 w-full text-left items-center rounded-xl p-2 transition group-hover:bg-slate-900/70">
+              <img src="{{ v.thumbnail }}" alt="" class="w-20 h-12 object-cover rounded-lg shrink-0 border border-slate-800" loading="lazy">
+              <span class="text-xs leading-5 line-clamp-2 text-slate-200">{{ v.title }}</span>
+            </button>
+            <form method="post" action="{% url 'library:start_download' %}" class="shrink-0 self-center">
+              {% csrf_token %}
+              <input type="hidden" name="video_id" value="{{ v.video_id }}">
+              <input type="hidden" name="video_title" value="{{ v.title }}">
+              <button type="submit" title="Download this video" class="rounded-lg border border-slate-700 bg-slate-900/70 px-2 py-1 text-xs text-slate-300 transition hover:border-brand/40 hover:text-brand">⬇</button>
+            </form>
+          </div>
         </li>
         {% endfor %}
       </ul>
@@ -70,13 +145,15 @@
         {% csrf_token %}
         <input type="hidden" name="url" value="{{ playlist_url }}">
         <input type="hidden" name="title" value="{{ title }}">
+        <input type="hidden" name="direct" value="1">
         <button type="submit" class="w-full py-2 text-sm rounded-lg bg-emerald-900/40 text-emerald-300 border border-emerald-800/50">Download full playlist</button>
       </form>
       {% endif %}
     </aside>
   </div>
 </div>
-{% if videos %}
+{% if videos or first_video_id %}
 <script src="{% static 'js/watch_embed_player.js' %}"></script>
+<script src="{% static 'js/quizzes_watch.js' %}"></script>
 {% endif %}
 {% endblock %}

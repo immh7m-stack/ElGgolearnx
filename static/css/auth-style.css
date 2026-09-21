@@ -1,0 +1,377 @@
+/* ======================================================
+   EL GoLearn - Professional Swapped Auth UI Stylesheet
+   الجانب البصري المضيء على اليمين وكارت الإدخال على الشمال
+   ====================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-dark: #040912;
+  --bg-gradient-start: #08162b;
+  --bg-gradient-end: #02050a;
+  --card-bg: rgba(9, 18, 33, 0.88);
+  --card-border: rgba(56, 189, 248, 0.18);
+  --glow-cyan: #38bdf8;
+  --glow-bright-cyan: #7dd3fc;
+  --glow-blue: #0284c7;
+  --btn-primary: linear-gradient(135deg, #1d4ed8, #0284c7);
+  --btn-primary-hover: linear-gradient(135deg, #2563eb, #38bdf8);
+  --input-bg: rgba(15, 23, 42, 0.75);
+  --input-border: rgba(255, 255, 255, 0.15);
+  --text-white: #ffffff;
+  --text-muted: #94a3b8;
+  --font-logo: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* ------------------------------------------------------
+   الحاوية الرئيسية المزدوجة (RTL Layout: Right Visual, Left Auth)
+   ------------------------------------------------------ */
+.auth-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row; /* يمين -> شمال في RTL */
+  background: radial-gradient(circle at 25% 50%, var(--bg-gradient-start) 0%, var(--bg-dark) 70%, var(--bg-gradient-end) 100%);
+}
+
+/* ------------------------------------------------------
+   الجانب الأيمن البصري: المنحنيات والعقد والشعار الصاعد
+   ------------------------------------------------------ */
+.visual-side {
+  flex: 1.15;
+  position: relative;
+  background: linear-gradient(135deg, #061120 0%, #0d1e38 50%, #050b16 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mesh-glow-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 650px;
+  height: 650px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.14) 0%, rgba(2, 132, 199, 0.04) 55%, transparent 75%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+#mesh-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+/* الشعار البارز في منتصف القسم البصري المضيء */
+.hero-brand-centerpiece {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  pointer-events: none;
+  animation: heroFloat 4s ease-in-out infinite alternate;
+}
+
+@keyframes heroFloat {
+  0% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(6px);
+  }
+}
+
+.hero-logo {
+  width: 135px;
+  height: 135px;
+  filter: drop-shadow(0 0 22px rgba(56, 189, 248, 0.55));
+}
+
+.hero-logo .brand-brain-logo {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-brand-name {
+  font-family: var(--font-logo);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-white);
+  letter-spacing: -0.02em;
+  text-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.9),
+    0 0 30px rgba(56, 189, 248, 0.5);
+}
+
+/* ------------------------------------------------------
+   الجانب الأيسر: كارت نموذج الإدخال
+   ------------------------------------------------------ */
+.auth-side {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  z-index: 5;
+}
+
+.circuit-bg-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(2, 132, 199, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* بطاقة النموذج الكلين الجذابة */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 42px 38px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(56, 189, 248, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+  transition: all 0.4s ease;
+}
+
+/* عنوان النموذج Welcome in EL GoLearn */
+.auth-title {
+  font-family: var(--font-logo);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--text-white);
+  margin-bottom: 28px;
+  text-align: center;
+  letter-spacing: -0.01em;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
+}
+
+/* النموذج وحقول الإدخال */
+#auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: right;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  padding: 13px 16px;
+  padding-left: 45px;
+  color: var(--text-white);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-wrapper input::placeholder {
+  color: #64748b;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--glow-cyan);
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 
+    0 0 0 3px rgba(56, 189, 248, 0.15),
+    0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.toggle-password {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  padding: 4px;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 6px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.divider span {
+  padding: 0 12px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.social-login {
+  display: flex;
+  justify-content: center;
+}
+
+.google-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  width: 60px;
+  height: 46px;
+}
+
+.google-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.google-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.submit-btn {
+  background: var(--btn-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: var(--btn-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(56, 189, 248, 0.45),
+    0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.auth-switch {
+  margin-top: 24px;
+  font-size: 0.92rem;
+  color: #94a3b8;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.auth-switch a {
+  color: var(--glow-bright-cyan);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.auth-switch a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+/* ------------------------------------------------------
+   التجاوب مع الجوال والشاشات الصغيرة
+   ------------------------------------------------------ */
+@media (max-width: 992px) {
+  .visual-side {
+    display: none;
+  }
+  .auth-side {
+    width: 100%;
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 30px 22px;
+    border-radius: 20px;
+  }
+  .auth-title {
+    font-size: 1.5rem;
+  }
+}

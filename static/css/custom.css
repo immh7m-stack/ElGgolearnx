@@ -83,6 +83,35 @@ body {
   }
 }
 
+#quiz-overlay {
+  overflow: visible !important;
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  max-height: calc(80vh - 2rem) !important;
+}
+
+#quiz-overlay-panel,
+#quiz-panel {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#quiz-overlay-panel {
+  max-height: calc(80vh - 132px);
+  -webkit-overflow-scrolling: touch;
+}
+
+#quiz-overlay, #quiz-overlay * {
+  touch-action: auto !important;
+}
+
+#quiz-form {
+  min-height: 0;
+  overflow: visible;
+}
+
 @keyframes chatThinkingPulse {
   0%,
   100% {
@@ -91,4 +120,17 @@ body {
   50% {
     opacity: 1;
   }
+}
+
+/* Embed helpers: use on containers that should reserve viewport height, then
+   add `embed-fill` to the <iframe> or <object> inside to fill it. */
+.embed-container {
+  --embed-offset: 12rem; /* override per-template if needed */
+  height: calc(100vh - var(--embed-offset));
+}
+.embed-fill {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
 }

@@ -1,0 +1,91 @@
+{% load static socialaccount %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EL GoLearn - إنشاء حساب</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/auth-style.css' %}" />
+</head>
+<body data-auth-mode="signup">
+  <div class="auth-container">
+    <div class="visual-side">
+      <div class="mesh-glow-bg"></div>
+      <canvas id="mesh-canvas"></canvas>
+      <div class="hero-brand-centerpiece">
+        <div class="brand-logo-wrapper hero-logo">
+          <svg class="brand-brain-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGradHero" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="50%" stop-color="#cbd5e1" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+              <linearGradient id="arrowGradHero" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#0284c7" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="44" stroke="url(#logoGradHero)" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.5" />
+            <path d="M35 38C30 38 26 42 26 47C26 50 28 53 31 54C28 56 26 60 26 64C26 70 31 75 37 75C41 75 44 73 46 70C48 73 51 75 55 75C62 75 67 70 67 63C67 59 65 56 62 54C65 52 67 48 67 44C67 38 61 33 54 33C50 33 46 35 44 38C42 35 38 38 35 38Z" stroke="url(#logoGradHero)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <path d="M36 48C40 48 44 46 44 42" stroke="url(#logoGradHero)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M48 58C52 58 56 55 56 50" stroke="url(#logoGradHero)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M22 68C24 40 45 22 72 22M72 22V32M72 22H62" stroke="url(#arrowGradHero)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <h2 class="hero-brand-name">EL GoLearn</h2>
+      </div>
+    </div>
+
+    <div class="auth-side">
+      <div class="circuit-bg-glow"></div>
+      <div class="auth-card">
+        <h1 class="auth-title" id="auth-title">Welcome in EL GoLearn</h1>
+
+        <form id="auth-form" method="post" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          {{ form.hidden_fields }}
+
+          {% for field in form.visible_fields %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            <div class="input-wrapper">
+              {{ field }}
+            </div>
+            {% if field.errors %}
+            <div class="text-red-300 text-sm mt-1">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+
+          <div class="divider">
+            <span>أو قم بالتسجيل عبر:</span>
+          </div>
+
+          <div class="social-login">
+            <a href="{% provider_login_url 'google' %}" class="google-btn">
+              <img class="google-icon" src="https://www.svgrepo.com/show/355037/google.svg" alt="Google">
+            </a>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submit-btn">
+            <span>إنشاء حساب</span>
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          <span id="switch-prompt">لديك حساب بالفعل؟</span>
+          <a href="{% url 'account_login' %}" id="switch-link">تسجيل الدخول</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/auth-script.js' %}"></script>
+</body>
+</html>

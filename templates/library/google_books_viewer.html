@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Google Books Viewer{% endblock %}
+{% block content %}
+<div class="w-full max-w-full mx-auto mt-10 py-4 px-2 sm:px-4 min-h-[calc(100vh-4rem)]">
+  <div class="mb-4">
+    <h1 class="text-2xl font-bold">{{ title }}</h1>
+    <p class="text-sm text-slate-400">عرض الكتاب عبر Google Books. إذا لم يسمح الكتاب بالتضمين، سيتم فتح صفحة المعاينة الرسمية.</p>
+  </div>
+  <div class="border border-surface-border rounded-xl overflow-hidden shadow-sm embed-container" style="--embed-offset:10rem;">
+    <iframe src="{{ viewer_url }}" class="embed-fill"></iframe>
+  </div>
+  <div class="mt-4 text-sm text-slate-400">
+    إذا لم تعمل المعاينة داخل الإطار، استخدم الرابط التالي:
+    <a href="{{ viewer_url }}" target="_blank" rel="noopener" class="text-brand">فتح في Google Books</a>
+  </div>
+</div>
+{% endblock %}

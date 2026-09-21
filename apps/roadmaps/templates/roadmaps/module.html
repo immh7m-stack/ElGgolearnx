@@ -29,7 +29,7 @@
         <p class="text-sm font-medium mb-1">📖 كتب مجانية</p>
         <ul class="text-sm text-slate-300 mb-3 space-y-1">
           {% for book in res.free_books %}
-          <li><a href="{% url 'library:read_pdf' %}?url={{ book.url|urlencode }}" target="_blank" rel="noopener">{{ book.title }}</a> — {{ book.author }}</li>
+          <li><a href="{% url 'library:read_book' %}?url={{ book.url|urlencode }}&title={{ book.title|urlencode }}">{{ book.title }}</a> — {{ book.author }}</li>
           {% endfor %}
         </ul>
         {% endif %}

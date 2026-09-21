@@ -1,6 +1,23 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}الرئيسية{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/splash-style.css' %}">
+{% endblock %}
 {% block content %}
+<div id="splash-screen" class="splash-screen" aria-hidden="true">
+  <canvas id="particles-canvas"></canvas>
+  <div class="radial-glow"></div>
+  <div class="splash-content">
+    <h1 class="golearn-logo">GoLearn</h1>
+    <div class="loading-dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
+</div>
+
 <section class="text-center py-16 md:py-24">
   <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
     ابدأ رحلتك التقنية<br>
@@ -63,4 +80,8 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/splash-script.js' %}"></script>
 {% endblock %}

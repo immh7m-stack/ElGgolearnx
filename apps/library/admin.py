@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CuratedBook, DownloadJob, EducationalSite, SearchHistory, UserLibraryItem, UserPlaylist
+from .models import Book, CuratedBook, DownloadJob, EducationalSite, SearchHistory, UserLibraryItem, UserPlaylist
 
 
 @admin.register(EducationalSite)
@@ -17,6 +17,27 @@ class CuratedBookAdmin(admin.ModelAdmin):
     list_filter = ("field_slug", "level", "is_free")
     search_fields = ("title", "author")
     list_editable = ("order_rank",)
+
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    list_display = ("title", "author", "category", "language", "is_cached", "cache_expires_at", "is_active", "created_at")
+    list_filter = ("category", "language", "is_cached", "is_active")
+    search_fields = ("title", "author", "description")
+    readonly_fields = ("created_at", "updated_at", "is_cached", "cached_at", "last_accessed", "cache_size", "cache_expires_at")
+    fieldsets = (
+        (None, {
+            "fields": ("title", "author", "description", "cover", "pdf_file", "url", "category", "language", "pages", "is_active")
+        }),
+        ("Cache", {
+            "fields": ("is_cached", "cached_at", "last_accessed", "cache_size", "cache_expires_at"),
+            "classes": ("collapse",),
+        }),
+        ("Metadata", {
+            "fields": ("created_at", "updated_at"),
+            "classes": ("collapse",),
+        }),
+    )
 
 
 @admin.register(UserPlaylist)

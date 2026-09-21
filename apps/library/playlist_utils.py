@@ -8,6 +8,9 @@ from .services import youtube
 
 def record_playlist_open(user, url: str, title: str, playlist_id: str = "", thumbnail: str = "") -> None:
     """Ensure a playlist appears in History after the user opens the watch page."""
+    if user is None or getattr(user, "is_authenticated", False) is False:
+        return
+
     canon, pid = youtube.canonical_playlist_url(url, playlist_id or "")
     pid = pid or youtube.extract_playlist_id_from_url(url)
     if not (canon or url).strip():

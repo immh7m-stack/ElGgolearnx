@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}لوحة التقدم{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">أهلاً، {{ user.get_short_name|default:user.email }} 👋</h1>
+<p class="text-slate-400 mb-8">آخر نشاط: {{ stats.last_active|default:"—" }}</p>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-brand">{{ stats.total_skills_done }}</p>
+    <p class="text-slate-400 text-sm">مهارة مكتملة</p>
+  </div>
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-emerald-400">{{ stats.total_projects_done }}</p>
+    <p class="text-slate-400 text-sm">مشروع على GitHub</p>
+  </div>
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-amber-400 capitalize">{{ stats.current_level|default:"—" }}</p>
+    <p class="text-slate-400 text-sm">المستوى</p>
+  </div>
+  <div class="p-5 rounded-xl bg-surface-card border border-surface-border text-center">
+    <p class="text-3xl font-bold text-orange-400">{{ stats.streak_days }}</p>
+    <p class="text-slate-400 text-sm">يوم streak</p>
+  </div>
+</div>
+
+{% if focus_summary %}
+{% if focus_summary.status_key == 'warning' or focus_summary.status_key == 'critical' %}
+<section class="mb-8 rounded-2xl border border-rose-500/60 bg-rose-500/15 p-5 shadow-[0_0_35px_rgba(248,113,113,0.2)] animate-pulse" role="alert" aria-live="assertive">
+  <div class="flex items-start gap-3">
+    <span class="text-3xl">🚨</span>
+    <div>
+      <h2 class="font-bold text-rose-300">تنبيه تركيز</h2>
+      <p class="text-sm text-rose-100 mt-1">تم رصد تشتت أو ضعف تركيز في الجلسة الأخيرة. خذ استراحة قصيرة أو عد إلى جلسة الدراسة فورًا.</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+<section class="p-6 rounded-2xl border mb-10 {% if focus_summary.status_key == 'excellent' %}border-emerald-500/40 bg-emerald-500/10{% elif focus_summary.status_key == 'good' %}border-brand/40 bg-brand/10{% elif focus_summary.status_key == 'warning' %}border-amber-500/40 bg-amber-500/10{% else %}border-rose-500/40 bg-rose-500/10{% endif %}">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="font-semibold">تقرير التركيز اليومي</h2>
+    <span class="px-3 py-1 rounded-full text-xs font-medium uppercase {% if focus_summary.status_key == 'excellent' %}bg-emerald-500/20 text-emerald-300{% elif focus_summary.status_key == 'good' %}bg-brand/20 text-brand{% elif focus_summary.status_key == 'warning' %}bg-amber-500/20 text-amber-300{% else %}bg-rose-500/20 text-rose-300{% endif %}">{{ focus_summary.status }}</span>
+  </div>
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="p-4 rounded-xl bg-slate-950/40 border border-surface-border">
+      <p class="text-2xl font-bold text-brand">{{ focus_summary.avg_focus_score|floatformat:1 }}%</p>
+      <p class="text-slate-400 text-sm">متوسط التركيز</p>
+    </div>
+    <div class="p-4 rounded-xl bg-slate-950/40 border border-surface-border">
+      <p class="text-2xl font-bold text-amber-400">{{ focus_summary.total_distractions }}</p>
+      <p class="text-slate-400 text-sm">عدد الانحرافات</p>
+    </div>
+    <div class="p-4 rounded-xl bg-slate-950/40 border border-surface-border">
+      <p class="text-2xl font-bold text-emerald-400">{{ focus_summary.duration_seconds|divisibleby:60 }}</p>
+      <p class="text-slate-400 text-sm">المدة بالثواني</p>
+    </div>
+  </div>
+  {% if focus_sessions %}
+  <div class="mt-6">
+    <h3 class="text-sm font-semibold mb-2">آخر جلسات التحليل</h3>
+    <ul class="space-y-2">
+      {% for item in focus_sessions %}
+      <li class="flex items-center justify-between rounded-lg border border-surface-border bg-slate-950/40 px-3 py-2 text-sm">
+        <span>{{ item.created_at|date:"Y-m-d H:i" }}</span>
+        <span class="font-medium {% if item.status_key == 'excellent' %}text-emerald-400{% elif item.status_key == 'good' %}text-brand{% elif item.status_key == 'warning' %}text-amber-400{% else %}text-rose-400{% endif %}">{{ item.avg_focus_score|floatformat:1 }}% — {{ item.status }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>
+{% else %}
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border mb-10">
+  <p class="text-slate-400 text-sm">لم تُسجَّل جلسات تحليل وجه بعد. عند تشغيل محرك الوجه سيتم عرض النتائج هنا بشكل يومي.</p>
+</section>
+{% endif %}
+
+<section class="p-6 rounded-2xl bg-gradient-to-br from-slate-950/90 via-surface-card to-slate-900/80 border border-surface-border shadow-[0_0_40px_rgba(0,0,0,0.16)] mb-10">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+    <div>
+      <h2 class="font-semibold text-white">نتائج الاختبارات السابقة</h2>
+      <p class="text-sm text-slate-400">تابع آخر محاولاتك في الاختبارات الذكية داخل الفيديوهات.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs text-brand">{{ quiz_attempts|length }} محاولة</span>
+      <span class="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">مؤشرات سريعة</span>
+    </div>
+  </div>
+  {% if quiz_attempts %}
+  <div class="grid gap-3 md:grid-cols-3 mb-5">
+    <div class="rounded-2xl border border-brand/30 bg-brand/10 p-4 shadow-sm">
+      <p class="text-[11px] uppercase tracking-[0.24em] text-brand/80">أفضل درجة</p>
+      <p class="text-2xl font-bold text-brand">{{ best_quiz_score|floatformat:0 }}%</p>
+    </div>
+    <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 shadow-sm">
+      <p class="text-[11px] uppercase tracking-[0.24em] text-emerald-300/80">المتوسط</p>
+      <p class="text-2xl font-bold text-emerald-400">{{ average_quiz_score|floatformat:0 }}%</p>
+    </div>
+    <div class="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 shadow-sm">
+      <p class="text-[11px] uppercase tracking-[0.24em] text-amber-300/80">آخر محاولة</p>
+      <p class="text-2xl font-bold text-amber-400">{{ latest_quiz_score|floatformat:0 }}%</p>
+    </div>
+  </div>
+  <div class="space-y-3">
+    {% for attempt in quiz_attempts %}
+    <div class="flex flex-wrap items-center justify-between rounded-2xl border border-surface-border/70 bg-slate-950/40 px-4 py-3 shadow-sm">
+      <div>
+        <p class="font-medium text-white">{{ attempt.video_catalog.title|default:attempt.video_catalog.video_id }}</p>
+        <p class="text-xs text-slate-400">{{ attempt.completed_at|date:"Y-m-d H:i" }}</p>
+      </div>
+      <div class="text-left">
+        <p class="text-lg font-bold text-brand">{{ attempt.score|floatformat:0 }}%</p>
+        <p class="text-xs text-slate-400">{{ attempt.user_answers|length }} إجابات</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-sm text-slate-400">لم تسجّل أي اختبار بعد. افتح فيديوًا وابدأ أول محاولة ذكية.</p>
+  {% endif %}
+</section>
+
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border mb-10">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="font-semibold text-white">ساعات الدراسة</h2>
+    <span class="rounded-full border border-slate-700 bg-slate-900/60 px-3 py-1 text-sm text-slate-400">ملخص أسبوعي</span>
+  </div>
+
+  <div class="mb-6 rounded-xl border border-brand/30 bg-gradient-to-r from-brand/15 to-emerald-500/10 p-4 text-sm text-slate-200">
+    <p class="font-semibold text-white">اختبارات الفيديو الذكية</p>
+    <p class="mt-1 text-slate-300">يمكنك الآن فتح صفحة اختبار منفصل أو مجمع لكل فيديو من خلال زر “الاختبارات” في صفحة المشاهدة.</p>
+  </div>
+  <div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="p-4 rounded-xl bg-slate-900/40 border border-surface-border">
+      <p class="text-2xl font-bold text-brand">{{ total_study_hours|floatformat:1 }}</p>
+      <p class="text-slate-400 text-sm">إجمالي الساعات</p>
+    </div>
+    <div class="p-4 rounded-xl bg-slate-900/40 border border-surface-border">
+      <p class="text-2xl font-bold text-emerald-400">{{ today_study_hours|floatformat:1 }}</p>
+      <p class="text-slate-400 text-sm">ساعات اليوم</p>
+    </div>
+  </div>
+  {% if daily_breakdown %}
+  <ul class="space-y-2">
+    {% for item in daily_breakdown %}
+    <li class="flex items-center justify-between rounded-lg border border-surface-border bg-slate-950/40 px-3 py-2 text-sm">
+      <span>{{ item.date|date:"Y-m-d" }}</span>
+      <span class="text-brand">{{ item.total_hours|floatformat:1 }} ساعة</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-slate-400 text-sm">لم تُسجل جلسات بعد. ابدأ مؤقت التركيز وسيظهر هنا التقدم.</p>
+  {% endif %}
+  {% if study_sessions %}
+  <div class="mt-6">
+    <h3 class="text-sm font-semibold mb-2">أحدث الجلسات</h3>
+    <ul class="space-y-2">
+      {% for session in study_sessions %}
+      <li class="flex items-center justify-between rounded-lg border border-surface-border bg-slate-950/40 px-3 py-2 text-sm">
+        <span>{{ session.label|default:"جلسة تركيز" }}</span>
+        <span class="text-emerald-400">{{ session.duration_minutes }} دقيقة</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>
+
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border mb-10">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div>
+      <h2 class="font-semibold text-lg">مؤشر التركيز الذكي</h2>
+      <p class="text-sm text-slate-400">تتبع سلوكك أثناء المذاكرة مع تنبيه واضح عند الانحراف.</p>
+    </div>
+    {% if user.is_authenticated %}
+    <button id="focus-toggle-btn" class="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand/20 transition hover:bg-brand-dark">
+      تشغيل التتبع
+    </button>
+    {% else %}
+    <span class="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-200">سجل الدخول لتمكين هذه الميزة</span>
+    {% endif %}
+  </div>
+
+  <div class="grid md:grid-cols-4 gap-4 mb-6">
+    <div class="rounded-xl border border-surface-border bg-slate-950/40 p-4">
+      <p class="text-2xl font-bold text-brand" id="focus-day-score">—</p>
+      <p class="text-sm text-slate-400">متوسط التركيز اليوم</p>
+    </div>
+    <div class="rounded-xl border border-surface-border bg-slate-950/40 p-4">
+      <p class="text-2xl font-bold text-emerald-400" id="focus-day-sessions">0</p>
+      <p class="text-sm text-slate-400">جلسات مسجلة</p>
+    </div>
+    <div class="rounded-xl border border-surface-border bg-slate-950/40 p-4">
+      <p class="text-2xl font-bold text-amber-400" id="focus-day-distractions">0</p>
+      <p class="text-sm text-slate-400">عدد الانحرافات</p>
+    </div>
+    <div class="rounded-xl border border-surface-border bg-slate-950/40 p-4">
+      <p class="text-2xl font-bold text-slate-100" id="focus-day-notes">—</p>
+      <p class="text-sm text-slate-400">ملاحظات الانتباه</p>
+    </div>
+  </div>
+
+  <div class="mt-6 rounded-2xl border border-dashed border-surface-border bg-slate-900/30 p-4 text-sm text-slate-400">
+    <p class="font-semibold text-slate-200 mb-2">ماذا يحدث عند التشغيل؟</p>
+    <ul class="list-disc pr-5 space-y-1">
+      <li>يبدأ التتبع عبر الكاميرا عند الموافقة على الاستمرار.</li>
+      <li>يتم تحليل الحركة والانتباه والتركيز بشكل ذكي.</li>
+      <li>يظهر تنبيه واضح عند الانحراف أو انخفاض التركيز.</li>
+    </ul>
+  </div>
+
+  <div id="focus-live-preview" class="mt-6 hidden rounded-2xl border border-surface-border bg-slate-950/60 p-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <h3 class="font-semibold text-slate-200">البث المباشر للكاميرا</h3>
+      <div class="flex items-center gap-2">
+        <span id="focus-live-status" class="rounded-full bg-amber-500/20 px-3 py-1 text-xs text-amber-200">في انتظار التشغيل</span>
+        <span id="focus-live-state" class="rounded-full bg-slate-700/70 px-3 py-1 text-xs text-slate-100">جارٍ التحليل</span>
+      </div>
+    </div>
+    <video id="focus-video-preview" autoplay playsinline muted class="w-full rounded-xl border border-surface-border bg-black"></video>
+  </div>
+</section>
+
+{% if current_field and current_track %}
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border mb-10">
+  <h2 class="font-semibold mb-2">مسارك الحالي: {{ current_field.name_ar }} → {{ current_track.career_level }}</h2>
+  <p class="text-xs text-slate-500 mb-4">يُحدَّث تلقائياً عند زيارة صفحة أي مسار. نسبة المهارات = المهارات التي ضغطت «تم» في ذلك المسار ÷ إجمالي مهارات المسار (لا تعتمد على نسبة مشاهدة الفيديو).</p>
+  <p class="text-sm text-slate-400 mb-1">المهارات في هذا المسار</p>
+  <div class="w-full h-3 bg-surface rounded-full overflow-hidden mb-4">
+    <div class="h-full bg-brand rounded-full" style="width: {{ progress_pct }}%"></div>
+  </div>
+  <p class="text-sm text-slate-400 mb-1">مشاريع GitHub المطلوبة في نفس المسار ({{ track_projects_done }} / {{ track_projects_total }})</p>
+  <div class="w-full h-3 bg-surface rounded-full overflow-hidden mb-4">
+    <div class="h-full bg-emerald-500 rounded-full" style="width: {{ project_progress_pct }}%"></div>
+  </div>
+  <a href="{% url 'roadmaps:track' slug=current_field.slug level=current_track.career_level %}"
+     class="inline-block px-5 py-2 rounded-lg bg-brand hover:bg-brand-dark transition text-sm">متابعة التعلم →</a>
+</section>
+{% else %}
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border border-dashed mb-10">
+  <p class="text-slate-400 text-sm">لم يُحدَّد مسار بعد. افتح <a href="{% url 'roadmaps:fields' %}" class="text-brand hover:underline">Roadmaps</a> واختر مجالاً ومساراً ليظهر تقدمك هنا.</p>
+</section>
+{% endif %}
+
+<section>
+  <h2 class="text-xl font-bold mb-4">مشاريعك على GitHub</h2>
+  {% if project_logs %}
+  <ul class="space-y-3">
+    {% for log in project_logs %}
+    <li class="flex items-center justify-between p-4 rounded-xl bg-surface-card border border-surface-border">
+      <span>✓ {{ log.project.title_ar }}</span>
+      <a href="{{ log.github_url }}" target="_blank" class="text-brand text-sm hover:underline">{{ log.github_url }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-slate-400">لم ترفع مشاريع بعد. ابدأ من صفحة المسار.</p>
+  {% endif %}
+</section>
+
+<section class="p-6 rounded-2xl bg-surface-card border border-surface-border mt-10">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="font-semibold">📋 المهام من ElGoPlan</h2>
+    <a href="{% url 'planner:home' %}" class="text-xs text-brand hover:underline">إدارة المهام →</a>
+  </div>
+  <div id="tasks-stats" class="grid md:grid-cols-3 gap-4 mb-6">
+    <div class="p-4 rounded-xl bg-slate-900/40 border border-surface-border">
+      <p class="text-2xl font-bold text-brand" id="total-tasks">0</p>
+      <p class="text-slate-400 text-sm">إجمالي المهام</p>
+    </div>
+    <div class="p-4 rounded-xl bg-slate-900/40 border border-surface-border">
+      <p class="text-2xl font-bold text-emerald-400" id="completed-tasks">0</p>
+      <p class="text-slate-400 text-sm">مهام مكتملة</p>
+    </div>
+    <div class="p-4 rounded-xl bg-slate-900/40 border border-surface-border">
+      <p class="text-2xl font-bold text-orange-400" id="completion-rate">0%</p>
+      <p class="text-slate-400 text-sm">معدل الإكمال</p>
+    </div>
+  </div>
+  <div class="w-full h-2 bg-surface rounded-full overflow-hidden mb-4">
+    <div id="progress-bar" class="h-full bg-gradient-to-r from-brand to-brand-light rounded-full transition-all duration-500" style="width: 0%"></div>
+  </div>
+  <p class="text-xs text-slate-400 text-center">
+    <span id="pending-count">0</span> مهام في الانتظار
+  </p>
+</section>
+
+{{ focus_summary|json_script:"focus-summary-data" }}
+<div id="focus-permission-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 px-4">
+  <div class="w-full max-w-md rounded-2xl border border-surface-border bg-surface-card p-6 shadow-2xl">
+    <h3 class="text-xl font-semibold mb-3">السماح بالوصول للكاميرا والترجمة الذكية</h3>
+    <p class="text-sm text-slate-400 mb-4">نحتاج إذنًا لاستخدام الكاميرا لتحليل التركيز أثناء الدراسة. لن يتم حفظ الصور إلا كبيانات تحليلية مؤقتة ومشفرة داخل الجلسة.</p>
+    <div class="flex items-center gap-3 mb-6">
+      <input id="focus-privacy-check" type="checkbox" class="h-4 w-4 rounded border-surface-border bg-slate-900">
+      <label for="focus-privacy-check" class="text-sm text-slate-300">أوافق على استخدام الكاميرا وتفعيل التحليل للتركيز</label>
+    </div>
+    <div class="flex justify-end gap-3">
+      <button id="focus-modal-cancel" class="rounded-lg border border-surface-border px-4 py-2 text-sm text-slate-300">إلغاء</button>
+      <button id="focus-modal-accept" class="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white">ابدأ التتبع</button>
+    </div>
+  </div>
+</div>
+
+<div id="focus-login-tip" class="fixed left-4 top-24 z-40 hidden max-w-sm rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100 shadow-lg">
+  سجّل الدخول لتمكين تتبع التركيز من خلال الكاميرا والبدء تلقائيًا عند دخولك إلى المنصة.
+</div>
+
+<script>
+(async function() {
+  try {
+    const res = await fetch('/api/plan/tasks/stats/');
+    const data = await res.json();
+    document.getElementById('total-tasks').textContent = data.total_tasks;
+    document.getElementById('completed-tasks').textContent = data.completed_tasks;
+    document.getElementById('completion-rate').textContent = data.completion_rate + '%';
+    document.getElementById('pending-count').textContent = data.pending_tasks;
+    document.getElementById('progress-bar').style.width = data.completion_rate + '%';
+  } catch (e) {
+    console.error('Failed to load task stats:', e);
+  }
+})();
+
+(function() {
+  const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+  const toggleButton = document.getElementById('focus-toggle-btn');
+  const modal = document.getElementById('focus-permission-modal');
+  const acceptButton = document.getElementById('focus-modal-accept');
+  const cancelButton = document.getElementById('focus-modal-cancel');
+  const privacyCheck = document.getElementById('focus-privacy-check');
+  const loginTip = document.getElementById('focus-login-tip');
+
+  if (!isAuthenticated) {
+    if (loginTip) {
+      loginTip.classList.remove('hidden');
+      setTimeout(() => loginTip.classList.add('hidden'), 4000);
+    }
+    return;
+  }
+
+  const showModal = () => {
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      privacyCheck.checked = false;
+    }
+  };
+
+  const hideModal = () => {
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  };
+
+  if (toggleButton) {
+    toggleButton.addEventListener('click', () => {
+      if (window.ElGoFocusTracker?.active) {
+        window.ElGoFocusTracker.stop();
+        toggleButton.textContent = 'تشغيل التتبع';
+        toggleButton.classList.replace('bg-emerald-500', 'bg-brand');
+        const previewBox = document.getElementById('focus-live-preview');
+        if (previewBox) previewBox.classList.add('hidden');
+        return;
+      }
+      showModal();
+    });
+  }
+  if (cancelButton) {
+    cancelButton.addEventListener('click', hideModal);
+  }
+  if (acceptButton) {
+    acceptButton.addEventListener('click', () => {
+      if (!privacyCheck.checked) {
+        alert('يرجى الموافقة على سياسة الخصوصية قبل تشغيل التتبع.');
+        return;
+      }
+      hideModal();
+      if (toggleButton) {
+        toggleButton.textContent = 'إيقاف التتبع';
+        toggleButton.classList.replace('bg-brand', 'bg-emerald-500');
+      }
+      const previewBox = document.getElementById('focus-live-preview');
+      const previewVideo = document.getElementById('focus-video-preview');
+      const statusLabel = document.getElementById('focus-live-status');
+      if (previewBox && previewVideo) {
+        previewBox.classList.remove('hidden');
+        statusLabel.textContent = 'جاري تشغيل الكاميرا';
+        statusLabel.className = 'rounded-full bg-amber-500/20 px-3 py-1 text-xs text-amber-200';
+        if (window.ElGoFocusTracker) {
+          window.ElGoFocusTracker.start(previewVideo, statusLabel);
+        }
+      }
+      localStorage.setItem('elgo-focus-active', 'true');
+    });
+  }
+
+      const previewBox = document.getElementById('focus-live-preview');
+      const previewVideo = document.getElementById('focus-video-preview');
+      const statusLabel = document.getElementById('focus-live-status');
+      if (window.ElGoFocusTracker?.active && previewBox && previewVideo && statusLabel) {
+        previewBox.classList.remove('hidden');
+        if (toggleButton) {
+          toggleButton.textContent = 'التتبع مفعل';
+          toggleButton.classList.replace('bg-brand', 'bg-emerald-500');
+        }
+      }
+    })();
+  </script>
+
+  {% endblock %}

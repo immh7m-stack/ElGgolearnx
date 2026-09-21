@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoLearn - Loading Screen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/splash-style.css' %}" />
+</head>
+<body>
+  <div id="splash-screen" class="splash-screen">
+    <canvas id="particles-canvas"></canvas>
+    <div class="radial-glow"></div>
+    <div class="splash-content">
+      <h1 class="golearn-logo">GoLearn</h1>
+      <div class="loading-dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'js/splash-script.js' %}"></script>
+</body>
+</html>

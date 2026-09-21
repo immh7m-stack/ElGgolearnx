@@ -1,0 +1,108 @@
+/* ======================================================
+   GoLearn - Splash Loading Screen Stylesheet
+   ====================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-dark: #040912;
+  --bg-gradient-start: #081324;
+  --bg-gradient-end: #02050a;
+  --glow-cyan: #38bdf8;
+  --glow-bright-cyan: #7dd3fc;
+  --text-white: #ffffff;
+  --font-logo: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: #ffffff;
+  font-family: var(--font-logo);
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: radial-gradient(circle at 50% 45%, var(--bg-gradient-start) 0%, var(--bg-dark) 65%, var(--bg-gradient-end) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  visibility: visible;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#particles-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.radial-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 280px;
+  background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.12) 0%, rgba(2, 132, 199, 0.04) 50%, transparent 75%);
+  filter: blur(45px);
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 50%;
+}
+
+.splash-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  user-select: none;
+}
+
+.golearn-logo {
+  font-family: var(--font-logo);
+  font-size: clamp(3.8rem, 8vw, 6.4rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text-white);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.85), 0 0 30px rgba(56, 189, 248, 0.35), 0 0 55px rgba(2, 132, 199, 0.2);
+  animation: logoGlowSubtle 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlowSubtle {
+  0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 25px rgba(56, 189, 248, 0.3), 0 0 45px rgba(2, 132, 199, 0.15); }
+  100% { text-shadow: 0 0 16px rgba(255, 255, 255, 0.95), 0 0 36px rgba(56, 189, 248, 0.45), 0 0 65px rgba(2, 132, 199, 0.25); }
+}
+
+.loading-dots { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.loading-dots .dot {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--glow-bright-cyan), var(--glow-cyan));
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 0 0 18px rgba(56, 189, 248, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+  animation: dotWave 1.35s ease-in-out infinite;
+}
+.loading-dots .dot:nth-child(1) { animation-delay: 0s; }
+.loading-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotWave {
+  0%, 100% { transform: scale(0.75); opacity: 0.3; box-shadow: 0 0 5px rgba(56, 189, 248, 0.3), 0 0 10px rgba(56, 189, 248, 0.15); }
+  50% { transform: scale(1.25); opacity: 1; box-shadow: 0 0 14px rgba(125, 211, 252, 0.9), 0 0 25px rgba(56, 189, 248, 0.7); }
+}

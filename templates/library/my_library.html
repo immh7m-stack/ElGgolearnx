@@ -44,9 +44,11 @@
     <li class="p-3 rounded-lg bg-surface-card border border-surface-border flex justify-between items-center flex-wrap gap-2">
       <span>{{ item.title }} <span class="text-xs text-slate-500">({{ item.item_type }})</span></span>
       <div class="flex gap-2 shrink-0">
-      <a href="{% if item.item_type == 'book' %}{% url 'library:read_pdf' %}?url={{ item.url|urlencode }}{% else %}{{ item.url }}{% endif %}" target="_blank" rel="noopener" class="text-sm text-brand">Open</a>
       {% if item.item_type == 'book' %}
+      <a href="{% url 'library:read_book' %}?url={{ item.url|urlencode }}&title={{ item.title|urlencode }}" rel="noopener" class="text-sm text-brand">Read online</a>
       <a href="{% url 'library:read_pdf' %}?url={{ item.url|urlencode }}&disposition=attachment" rel="noopener" class="text-sm text-emerald-400" download>Download</a>
+      {% else %}
+      <a href="{{ item.url }}" rel="noopener" class="text-sm text-brand">Open</a>
       {% endif %}
       </div>
     </li>

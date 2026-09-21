@@ -4,9 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <title>{% block title %}ElGgolearn{% endblock %} — تعلم تقني بالعربي</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.ElGoPlanConfig = {
+      isAuthenticated: {{ user.is_authenticated|yesno:"true,false" }},
+      studySessionUrl: "{% url 'api-study-session' %}",
+      studyTimerUrl: "{% url 'api-study-timer' %}",
+      studyTimerFinishUrl: "{% url 'api-study-timer-finish' %}",
+      studyTimerCancelUrl: "{% url 'api-study-timer-cancel' %}",
+    };
+  </script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/background.css' %}">
   <link rel="stylesheet" href="{% static 'css/custom.css' %}">
   <script>
     tailwind.config = {
@@ -23,6 +34,14 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-surface text-slate-100 min-h-screen font-sans antialiased">
+  <div class="golearn-bg-container" aria-hidden="true">
+    <div class="golearn-bg-aurora-1"></div>
+    <div class="golearn-bg-aurora-2"></div>
+    <div class="golearn-bg-aurora-3"></div>
+    <div class="golearn-bg-spotlight"></div>
+    <canvas id="golearn-bg-canvas"></canvas>
+  </div>
+  <div class="app-shell">
   {% include "components/navbar.html" %}
   <main class="{% block main_class %}max-w-7xl mx-auto px-4 py-8{% endblock %}">
     {% if messages %}
@@ -37,8 +56,13 @@
     {% block content %}{% endblock %}
   </main>
   {% include "components/chat_bubble.html" %}
+  {% if user.is_authenticated %}
+  <script src="{% static 'js/focus-tracker.js' %}"></script>
+  {% endif %}
+  <script src="{% static 'js/background.js' %}"></script>
   <script src="{% static 'js/pomodoro-float.js' %}"></script>
   <script src="{% static 'js/chat.js' %}"></script>
   {% block extra_js %}{% endblock %}
+  </div>
 </body>
 </html>

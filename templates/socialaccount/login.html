@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+{% load socialaccount i18n %}
+
+{% block title %}تسجيل الدخول عبر {{ provider.name }}{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+  <style>
+    nav,
+    #chat-widget,
+    .golearn-bg-container,
+    #golearn-bg-canvas,
+    .pomodoro-float,
+    .chat-bubble,
+    .chat-toggle,
+    button[aria-label="Pomodoro"],
+    button[aria-label="Pomodoro"] + div {
+      display: none !important;
+    }
+    body {
+      background: radial-gradient(circle at top left, rgba(248, 113, 113, 0.12), transparent 22%),
+                  radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.14), transparent 20%),
+                  #06111d;
+      min-height: 100vh;
+      color: #eef2ff;
+      overflow: hidden;
+    }
+    .page-shell {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 18px;
+    }
+    .auth-card {
+      width: min(540px, 100%);
+      padding: 42px 40px 32px;
+      border-radius: 30px;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      box-shadow: 0 28px 80px rgba(15, 23, 42, 0.32);
+      backdrop-filter: blur(18px);
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .auth-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      box-shadow: 0 20px 40px rgba(239, 68, 68, 0.28);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+    }
+    .auth-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      letter-spacing: -0.04em;
+    }
+    .auth-subtitle {
+      color: #cbd5e1;
+      font-size: 1rem;
+      line-height: 1.8;
+      max-width: 88%;
+      margin: 0 auto;
+    }
+    .auth-form {
+      margin-top: 24px;
+      display: grid;
+      gap: 20px;
+    }
+    .auth-form p {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 0.98rem;
+      line-height: 1.75;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 20px 0;
+      border-radius: 18px;
+      border: none;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+      box-shadow: 0 20px 40px rgba(220, 38, 38, 0.35);
+    }
+    .btn-primary:hover,
+    .btn-primary:focus {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow: 0 26px 48px rgba(220, 38, 38, 0.4);
+    }
+    .btn-label {
+      display: inline-block;
+      letter-spacing: 0.08em;
+    }
+    .auth-footer {
+      margin-top: 26px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+    .auth-footer a {
+      color: #fb923c;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .auth-footer a:hover {
+      color: #fda4af;
+      text-decoration: underline;
+    }
+    @media (max-width: 640px) {
+      .auth-card {
+        padding: 34px 24px 28px;
+      }
+      .auth-title {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="page-shell">
+  <main class="auth-card">
+    <header class="auth-header">
+      <div class="auth-logo">✨</div>
+      <h1 class="auth-title">تسجيل الدخول عبر {{ provider.name }}</h1>
+      <p class="auth-subtitle">أنت على وشك تسجيل الدخول باستخدام {{ provider.name }}. اضغط متابعة للانتقال إلى صفحة تسجيل الدخول الخاصة بـ Google.</p>
+    </header>
+
+    <form method="post" class="auth-form" novalidate>
+      {% csrf_token %}
+      <p>سيتم تحويلك مباشرة إلى Google لإكمال عملية تسجيل الدخول.</p>
+      <button type="submit" class="btn-primary">
+        <span class="btn-label">متابعة</span>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="{% url 'account_signup' %}">العودة للتسجيل</a>
+    </div>
+  </main>
+</div>
+{% endblock content %}
+
+{% block extra_body %}
+  <script>
+    (function(){
+      try{
+        var f = document.querySelector('form');
+        if(f){
+          setTimeout(function(){ f.submit(); }, 50);
+        }
+      }catch(e){}
+    })();
+
+    (function(){
+      function hidePomodoro() {
+        document.querySelectorAll('button[aria-label="Pomodoro"]').forEach(function(el) {
+          el.remove();
+        });
+        document.querySelectorAll('div').forEach(function(el) {
+          if (el.textContent.includes('Pomodoro · ElGoPlan') || el.textContent.includes('ElGoPlan')) {
+            el.remove();
+          }
+        });
+      }
+      hidePomodoro();
+      var observer = new MutationObserver(hidePomodoro);
+      observer.observe(document.body, { childList: true, subtree: true });
+    })();
+  </script>
+{% endblock extra_body %}

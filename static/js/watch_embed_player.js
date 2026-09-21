@@ -33,6 +33,13 @@
     }
   };
 
+  window.getCurrentVideoTime = function () {
+    if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
+      return ytPlayer.getCurrentTime();
+    }
+    return 0;
+  };
+
   window.onYouTubeIframeAPIReady = function () {
     if (!currentVid) return;
     ytPlayer = new YT.Player(containerId, {
@@ -50,6 +57,7 @@
         },
       },
     });
+    window.__ytPlayer = ytPlayer;
   };
 
   var tag = document.createElement('script');

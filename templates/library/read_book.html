@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="w-full max-w-full mx-auto mt-10 py-4 px-2 sm:px-4 min-h-[calc(100vh-4rem)]">
+  <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold">{{ title }}</h1>
+      <p class="text-sm text-slate-400">
+        {% if is_pdf %}
+          قراءة الكتاب عبر موقعك من رابط PDF داخلي.
+        {% else %}
+          عرض معاينة الكتاب داخل موقعك من رابط خارجي.
+        {% endif %}
+      </p>
+    </div>
+    <div class="flex gap-2 flex-wrap">
+      <a href="javascript:history.back()" class="text-sm px-4 py-2 rounded-lg border border-surface-border">رجوع</a>
+      {% if is_pdf %}
+        <a href="{{ reader_src }}" target="_blank" rel="noopener" class="text-sm px-4 py-2 rounded-lg border border-surface-border">افتح PDF</a>
+        <a href="{{ reader_src }}&disposition=attachment" class="text-sm px-4 py-2 rounded-lg bg-emerald-500 text-white">تحميل PDF</a>
+      {% else %}
+        <a href="{{ reader_src }}" target="_blank" rel="noopener" class="text-sm px-4 py-2 rounded-lg border border-surface-border">افتح المعاينة في تبويب جديد</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="border border-surface-border rounded-xl overflow-hidden shadow-sm embed-container">
+    {% if is_pdf %}
+      <object data="{{ reader_src }}" type="application/pdf" class="embed-fill">
+        <div class="p-8 text-center">
+          <p class="text-slate-300 mb-4">لا يمكن عرض الملف داخل الصفحة في هذا المتصفح.</p>
+          <a href="{{ reader_src }}" target="_blank" rel="noopener" class="inline-block px-4 py-2 rounded-lg bg-brand text-white">افتح PDF في تبويب جديد</a>
+        </div>
+      </object>
+    {% else %}
+      <iframe src="{{ reader_src }}" class="embed-fill"></iframe>
+    {% endif %}
+  </div>
+  <div class="mt-4 text-sm text-slate-400">
+    {% if is_pdf %}
+      إذا لم يعرض الكتاب داخل الصفحة، اضغط "افتح PDF" لفتحه في تبويب جديد من داخل موقعك.
+    {% else %}
+      إذا لم تعمل معاينة الصفحة داخل الإطار، اضغط "افتح المعاينة في تبويب جديد".
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

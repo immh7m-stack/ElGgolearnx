@@ -1,13 +1,15 @@
 from datetime import date
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from apps.accounts.models import LearnerStats
+from apps.quizzes.models import QuizAttempt
 from apps.roadmaps.models import Field, Project, Skill, Track
 
-from .models import UserProjectLog, UserSkillProgress
+from .models import FocusSession, StudySession, UserProjectLog, UserSkillProgress
 
 
 @login_required
@@ -17,6 +19,33 @@ def dashboard(request):
         "skill__module__track__field"
     )
     project_logs = UserProjectLog.objects.filter(user=request.user).select_related("project__track__field")
+    quiz_attempts = QuizAttempt.objects.filter(user=request.user).select_related("video_catalog").order_by("-completed_at")[:6]
+    quiz_scores = [attempt.score for attempt in quiz_attempts if attempt.score is not None]
+    best_quiz_score = round(max(quiz_scores), 1) if quiz_scores else 0
+    average_quiz_score = round(sum(quiz_scores) / len(quiz_scores), 1) if quiz_scores else 0
+    latest_quiz_score = round(quiz_attempts[0].score, 1) if quiz_attempts else 0
+    study_sessions_all = StudySession.objects.filter(user=request.user)
+    study_sessions = study_sessions_all.order_by("-created_at")[:10]
+    study_totals = study_sessions_all.aggregate(total_minutes=Sum("duration_minutes"))
+    total_study_minutes = study_totals["total_minutes"] or 0
+    today = timezone.localdate()
+    today_study_minutes = study_sessions_all.filter(date=today).aggregate(total_minutes=Sum("duration_minutes"))["total_minutes"] or 0
+    daily_breakdown = list(
+        study_sessions_all.values("date").annotate(total_minutes=Sum("duration_minutes")).order_by("-date")[:7]
+    )
+    focus_sessions = FocusSession.objects.filter(user=request.user).order_by("-created_at")[:5]
+    latest_focus = focus_sessions.first()
+    focus_summary = None
+    if latest_focus:
+        focus_summary = {
+            "status": latest_focus.status,
+            "status_key": latest_focus.status_key,
+            "avg_focus_score": latest_focus.avg_focus_score,
+            "total_distractions": latest_focus.total_distractions,
+            "duration_seconds": latest_focus.duration_seconds,
+            "telemetry_points_count": latest_focus.telemetry_points_count,
+            "created_at": latest_focus.created_at,
+        }
 
     current_field = None
     current_track = None
@@ -51,6 +80,10 @@ def dashboard(request):
             "stats": stats,
             "skill_progress": skill_progress[:20],
             "project_logs": project_logs,
+            "quiz_attempts": quiz_attempts,
+            "best_quiz_score": best_quiz_score,
+            "average_quiz_score": average_quiz_score,
+            "latest_quiz_score": latest_quiz_score,
             "current_field": current_field,
             "current_track": current_track,
             "progress_pct": progress_pct,
@@ -58,6 +91,21 @@ def dashboard(request):
             "track_projects_done": track_projects_done,
             "project_progress_pct": project_progress_pct,
             "lang": lang,
+            "study_sessions": study_sessions,
+            "focus_sessions": focus_sessions,
+            "focus_summary": focus_summary,
+            "total_study_minutes": total_study_minutes,
+            "total_study_hours": round(total_study_minutes / 60, 1),
+            "today_study_minutes": today_study_minutes,
+            "today_study_hours": round(today_study_minutes / 60, 1),
+            "daily_breakdown": [
+                {
+                    "date": item["date"],
+                    "total_minutes": item["total_minutes"],
+                    "total_hours": round(item["total_minutes"] / 60, 1),
+                }
+                for item in daily_breakdown
+            ],
         },
     )
 

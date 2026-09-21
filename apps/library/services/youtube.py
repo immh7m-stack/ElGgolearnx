@@ -14,6 +14,25 @@ PL_RE = re.compile(r"^PL[\w-]+$")
 LIST_RE = re.compile(r"(?:^|[?&])list=([^&]+)", re.I)
 
 
+def extract_video_id_from_url(url: str) -> str:
+    """Return the YouTube video id from a watch URL, short URL, or embed URL."""
+    if not url:
+        return ""
+
+    s = url.strip()
+    patterns = [
+        r"(?:^|[?&])v=([\w-]{11})",
+        r"youtu\.be/([\w-]{11})",
+        r"youtube\.com/embed/([\w-]{11})",
+        r"youtube\.com/shorts/([\w-]{11})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, s, re.I)
+        if match:
+            return match.group(1)
+    return ""
+
+
 def extract_playlist_id_from_url(url: str) -> str:
     """Return YouTube playlist id from playlist or watch URL."""
     if not url:

@@ -12,6 +12,64 @@
   {% endfor %}
   <button type="submit" class="px-6 py-2.5 rounded-lg bg-brand hover:bg-brand-dark transition">حفظ</button>
 </form>
+
+<section class="mt-10 rounded-3xl border border-surface-border bg-surface-card p-6 shadow-[0_0_30px_rgba(0,0,0,0.18)]">
+  <div class="mb-5 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-surface-border bg-slate-950/40 p-4">
+      <p class="text-sm text-slate-400">متوسط الدرجة</p>
+      <p class="mt-2 text-3xl font-bold text-brand">{{ average_score|floatformat:1 }}%</p>
+    </div>
+    <div class="rounded-2xl border border-surface-border bg-slate-950/40 p-4">
+      <p class="text-sm text-slate-400">عدد المحاولات الناجحة</p>
+      <p class="mt-2 text-3xl font-bold text-emerald-400">{{ successful_attempts }}</p>
+    </div>
+    <div class="rounded-2xl border border-surface-border bg-slate-950/40 p-4">
+      <p class="text-sm text-slate-400">عدد المحاولات الإجمالية</p>
+      <p class="mt-2 text-3xl font-bold text-amber-400">{{ quiz_attempts|length }}</p>
+    </div>
+  </div>
+
+  <div class="mb-5 flex items-center justify-between gap-3">
+    <div>
+      <h2 class="text-lg font-semibold text-white">اختباراتك الأخيرة</h2>
+      <p class="text-sm text-slate-400">النتائج المخزنة في حسابك الشخصي.</p>
+    </div>
+    <span class="rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs text-brand">{{ quiz_attempts|length }} محاولة</span>
+  </div>
+
+  {% if attempt_details %}
+  <div class="space-y-4">
+    {% for item in attempt_details %}
+    <div class="rounded-2xl border border-surface-border bg-slate-950/40 p-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="font-semibold text-white">{{ item.attempt.video_catalog.title|default:item.attempt.video_catalog.video_id }}</p>
+          <p class="text-sm text-slate-400">{{ item.attempt.completed_at|date:"Y-m-d H:i" }}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-2xl font-bold text-brand">{{ item.attempt.score|floatformat:0 }}%</p>
+          <p class="text-xs text-slate-400">{{ item.correct_count }}/{{ item.total_answers }} صحيح</p>
+        </div>
+      </div>
+      {% if item.detailed_answers %}
+      <div class="mt-4 space-y-2 rounded-2xl border border-surface-border bg-slate-900/60 p-3">
+        {% for detail in item.detailed_answers %}
+        <div class="rounded-xl border border-surface-border bg-slate-950/80 p-3">
+          <p class="text-sm font-semibold text-white">{{ detail.question_text }}</p>
+          <p class="mt-2 text-sm text-slate-300">إجابتك: <span class="font-medium {% if detail.is_correct %}text-emerald-300{% else %}text-rose-300{% endif %}">{{ detail.user_answer }}</span></p>
+          <p class="text-sm text-slate-400">الإجابة الصحيحة: <span class="font-medium text-brand">{{ detail.correct_answer }}</span></p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-sm text-slate-400">لم تُسجَّل نتائج امتحان بعد. افتح صفحة الاختبار وابدأ أول محاولة.</p>
+  {% endif %}
+</section>
+
 <style>
   form input, form select, form textarea {
     width: 100%; padding: 0.5rem 1rem; border-radius: 0.5rem;

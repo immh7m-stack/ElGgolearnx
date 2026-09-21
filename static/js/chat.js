@@ -10,7 +10,10 @@
   const form = document.getElementById('chat-form');
   const input = document.getElementById('chat-input');
   const messages = document.getElementById('chat-messages');
+  const SESSION_KEY = 'elgolearn_chat_session_v1';
+  const PANEL_KEY = 'elgolearn_chat_panel_open_v1';
   let sessionId = null;
+  let restored = false;
   const isDebug =
     typeof window !== 'undefined' &&
     window.location &&
@@ -52,13 +55,96 @@
   refreshContextLabel();
 
   toggle?.addEventListener('click', () => {
-    panel.classList.toggle('hidden');
-    panel.classList.toggle('open');
+    const show = !panel.classList.contains('open');
+    setPanelOpen(show);
     refreshContextLabel();
-    if (!sessionId) startSession();
+    if (show && !sessionId) startSession();
   });
 
+  function loadSessionId() {
+    try { return localStorage.getItem(SESSION_KEY); } catch (e) { return null; }
+  }
+
+  function saveSessionId(id) {
+    try { localStorage.setItem(SESSION_KEY, String(id)); } catch (e) {}
+  }
+
+  function clearSessionId() {
+    try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+  }
+
+  function loadPanelOpen() {
+    try { return localStorage.getItem(PANEL_KEY) === '1'; } catch (e) { return false; }
+  }
+
+  function savePanelOpen(open) {
+    try { localStorage.setItem(PANEL_KEY, open ? '1' : '0'); } catch (e) {}
+  }
+
+  function setPanelOpen(open) {
+    if (!panel) return;
+    panel.classList.toggle('open', open);
+    panel.classList.toggle('hidden', !open);
+    savePanelOpen(open);
+  }
+
+  async function restoreHistory(sessionId) {
+    try {
+      const res = await fetch('/api/chat/' + sessionId + '/history/', {
+        method: 'GET',
+        credentials: 'same-origin',
+      });
+      if (!res.ok) {
+        logChat('restoreHistory HTTP ' + res.status, await res.text());
+        return false;
+      }
+      const data = await res.json();
+      if (!Array.isArray(data)) {
+        return false;
+      }
+      messages.innerHTML = '';
+      data.forEach((message) => {
+        appendMsg(message.role === 'user' ? 'user' : 'assistant', message.content || '');
+      });
+      messages.scrollTop = messages.scrollHeight;
+      return true;
+    } catch (e) {
+      logChat('restoreHistory network', e.message || e);
+      return false;
+    }
+  }
+
+  async function restoreSession() {
+    const storedId = loadSessionId();
+    if (!storedId) return;
+    sessionId = storedId;
+    const ok = await restoreHistory(sessionId);
+    if (!ok) {
+      clearSessionId();
+      sessionId = null;
+      return;
+    }
+    restored = true;
+
+    if (loadPanelOpen()) {
+      setPanelOpen(true);
+    }
+  }
+
+  // Attempt to restore any previous chat session and history on page load.
+  restoreSession();
+
   async function startSession() {
+    if (sessionId && !restored) {
+      const ok = await restoreHistory(sessionId);
+      if (ok) {
+        restored = true;
+        return;
+      }
+      clearSessionId();
+      sessionId = null;
+    }
+
     try {
       const res = await fetch('/api/chat/start/', {
         method: 'POST',
@@ -82,9 +168,12 @@
         data = JSON.parse(text);
       } catch (e) {
         logChat('startSession invalid JSON', text);
+        appendMsg('assistant', 'خطأ في رد الخادم أثناء بدء المحادثة.');
         return;
       }
       sessionId = data.id;
+      saveSessionId(sessionId);
+      restored = true;
     } catch (e) {
       logChat('startSession network', e.message || e);
       appendMsg('assistant', 'خطأ شبكة عند بدء المحادثة.');
