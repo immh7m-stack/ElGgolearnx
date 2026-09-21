@@ -15,9 +15,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Prepare environment file for Docker
+        run: |
+          cp .env.example .env
+
       - name: Validate Docker Compose config
         run: |
-          docker compose --env-file .env.example config
+          docker compose --env-file .env config
 
       - name: Build Docker image
         run: |
@@ -25,7 +29,13 @@ jobs:
 
       - name: Smoke test container startup
         run: |
-          docker run --rm -d --name elgolearnx-smoke -p 8000:8000 -e DJANGO_SETTINGS_MODULE=config.settings.development -e SECRET_KEY=test-secret-key -e DEBUG=True -e ALLOWED_HOSTS=localhost,127.0.0.1,testserver -e DB_ENGINE=sqlite elgolearnx:test
+          docker run --rm -d --name elgolearnx-smoke -p 8000:8000 \
+            -e DJANGO_SETTINGS_MODULE=config.settings.development \
+            -e SECRET_KEY=test-secret-key \
+            -e DEBUG=True \
+            -e ALLOWED_HOSTS=localhost,127.0.0.1,testserver \
+            -e DB_ENGINE=sqlite \
+            elgolearnx:test
           sleep 10
           docker ps --filter "name=elgolearnx-smoke" --format "table {{.Names}}\t{{.Status}}"
           docker logs elgolearnx-smoke --tail 50
