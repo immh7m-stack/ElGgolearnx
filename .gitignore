@@ -1,14 +1,61 @@
+# Python bytecode and caches
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Django / app runtime
 *.sqlite3
 db.sqlite3
 .env
+.env.*
 api.env
-.venv/
-venv/
-staticfiles/
+.env.local
+.env.production
+.env.development
+.env.example
+
+# Secret / OAuth / certificates
+client_secret_*.json
+*.googleusercontent.com.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Local generated files
 media/
+staticfiles/
+cache/
+logs/
 *.log
+
+# IDE / OS files
 .DS_Store
+Thumbs.db
 .idea/
 .vscode/
+*.swp
+*.swo
+
+# Coverage / build artifacts
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+build/
+dist/
+*.egg-info/
+
+# Node / frontend caches (if used later)
+node_modules/
