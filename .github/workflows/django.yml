@@ -1,4 +1,4 @@
-name: Django CI with PostgreSQL
+name: Django CI with PostgreSQL and Docker
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  django-tests:
     runs-on: ubuntu-latest
 
     services:
@@ -67,3 +67,18 @@ jobs:
       - name: Run tests
         run: |
           python manage.py test --settings=config.settings.development
+
+  docker-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose config
+        run: |
+          docker compose --env-file .env.example config
+
+      - name: Build Docker image
+        run: |
+          docker build -t elgolearnx:test .
