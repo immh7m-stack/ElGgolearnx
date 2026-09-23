@@ -8,18 +8,59 @@ import htm from 'https://esm.sh/htm@3.1.1';
 
 const html = htm.bind(h);
 
-const C = {
-  bg: '#0f172a',
-  card: '#1e293b',
-  border: '#334155',
-  accent: '#6366f1',
-  accent2: '#818cf8',
-  gold: '#fbbf24',
-  green: '#4ade80',
-  red: '#f87171',
-  text: '#f1f5f9',
-  dim: '#94a3b8',
-};
+function isLightTheme() {
+  return document.body && document.body.getAttribute('data-theme') === 'light';
+}
+
+function getThemePalette() {
+  const isLight = document.body && document.body.getAttribute('data-theme') === 'light';
+
+  if (isLight) {
+    return {
+      bg: '#fdf6e3',
+      card: '#fffaf0',
+      panel: '#f5ebd6',
+      border: 'rgba(196, 154, 88, 0.35)',
+      accent: '#c78d34',
+      accent2: '#d9a65b',
+      gold: '#d89d42',
+      green: '#3d7b46',
+      red: '#a54d35',
+      text: '#3a2f1f',
+      dim: '#6b5836',
+      input: '#fffdf8',
+      soft: '#f7e9cc',
+      hover: 'rgba(199, 141, 52, 0.12)',
+      selected: 'rgba(199, 141, 52, 0.18)',
+      userBubble: 'rgba(214, 173, 98, 0.18)',
+      assistantBubble: 'rgba(255, 250, 240, 0.85)',
+      shadow: 'rgba(99, 74, 26, 0.10)',
+    };
+  }
+
+  return {
+    bg: '#0f172a',
+    card: '#1e293b',
+    panel: '#111827',
+    border: '#334155',
+    accent: '#6366f1',
+    accent2: '#818cf8',
+    gold: '#fbbf24',
+    green: '#4ade80',
+    red: '#f87171',
+    text: '#f1f5f9',
+    dim: '#94a3b8',
+    input: '#0b1220',
+    soft: '#111827',
+    hover: 'rgba(99,102,241,.15)',
+    selected: 'rgba(99,102,241,.22)',
+    userBubble: 'rgba(99, 102, 241, 0.2)',
+    assistantBubble: '#1e293b',
+    shadow: 'rgba(2, 6, 23, 0.35)',
+  };
+}
+
+const C = getThemePalette();
 
 const PREFIX = 'elgoplan_v1_';
 
@@ -684,11 +725,12 @@ function JournalSection() {
     <div
       style=${{
         marginTop: '28px',
-        background: C.card,
-        border: '1px solid ' + C.border,
+        background: isLightTheme() ? '#fdf6e3' : C.card,
+        border: '1px solid ' + (isLightTheme() ? 'rgba(196,154,88,0.3)' : C.border),
         borderRadius: '20px',
         padding: '24px',
         color: C.text,
+        boxShadow: isLightTheme() ? '0 14px 28px rgba(99, 74, 26, 0.08)' : 'none',
       }}
     >
       <h2 style=${{ margin: '0 0 8px', fontSize: '18px', fontWeight: '800' }}>اليوميات والنشاط السنوي</h2>
@@ -874,8 +916,8 @@ function JournalSection() {
           </button>
         </div>
 
-        <div style=${{ background: C.bg, border: '1px solid ' + C.border, borderRadius: '14px', padding: '16px', marginBottom: '12px' }}>
-          <div style=${{ fontSize: '10px', color: C.dim, fontWeight: '700', marginBottom: '12px' }}>المزاج</div>
+        <div style=${{ background: isLightTheme() ? '#f5ecd7' : C.bg, border: '1px solid ' + (isLightTheme() ? 'rgba(196,154,88,0.3)' : C.border), borderRadius: '14px', padding: '16px', marginBottom: '12px' }}>
+          <div style=${{ fontSize: '10px', color: isLightTheme() ? '#3a2f1f' : C.dim, fontWeight: '700', marginBottom: '12px' }}>المزاج</div>
           <div style=${{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             ${MOODS.map(
               (m, i) => html`
@@ -906,9 +948,9 @@ function JournalSection() {
           </div>
         </div>
 
-        <div style=${{ background: C.bg, border: '1px solid ' + C.border, borderRadius: '14px', padding: '16px', marginBottom: '12px' }}>
+        <div style=${{ background: isLightTheme() ? '#f5ecd7' : C.bg, border: '1px solid ' + (isLightTheme() ? 'rgba(196,154,88,0.3)' : C.border), borderRadius: '14px', padding: '16px', marginBottom: '12px' }}>
           <div style=${{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', gap: '10px' }}>
-            <span style=${{ fontSize: '10px', color: C.dim, fontWeight: '700' }}>مهام اليوم</span>
+            <span style=${{ fontSize: '10px', color: isLightTheme() ? '#3a2f1f' : C.dim, fontWeight: '700' }}>مهام اليوم</span>
             <div style=${{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '100px' }}>
               <${GlowBar} pct=${donePct} color=${C.accent} h=${4} />
               <span style=${{ fontSize: '11px', color: C.accent, fontWeight: '700' }}>${donePct}%</span>
@@ -924,7 +966,7 @@ function JournalSection() {
                     alignItems: 'center',
                     gap: '10px',
                     padding: '8px 0',
-                    borderBottom: '1px solid rgba(51,65,85,.35)',
+                    borderBottom: isLightTheme() ? '1px solid rgba(196,154,88,0.28)' : '1px solid rgba(51,65,85,.35)',
                     cursor: 'pointer',
                   }}
                   onClick=${() => toggleTask(t.id)}
@@ -989,8 +1031,8 @@ function JournalSection() {
           </div>
         </div>
 
-        <div style=${{ background: C.bg, border: '1px solid ' + C.border, borderRadius: '14px', padding: '16px' }}>
-          <div style=${{ fontSize: '10px', color: C.dim, fontWeight: '700', marginBottom: '10px' }}>مذكّرات اليوم</div>
+        <div style=${{ background: isLightTheme() ? '#f5ecd7' : C.bg, border: '1px solid ' + (isLightTheme() ? 'rgba(196,154,88,0.3)' : C.border), borderRadius: '14px', padding: '16px' }}>
+          <div style=${{ fontSize: '10px', color: isLightTheme() ? '#3a2f1f' : C.dim, fontWeight: '700', marginBottom: '10px' }}>مذكّرات اليوم</div>
           <textarea
             value=${entry.note}
             onInput=${(e) => setField('note', e.target.value)}

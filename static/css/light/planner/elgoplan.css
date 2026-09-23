@@ -1,0 +1,183 @@
+/* Light ElGoPlan */
+:root {
+  --bg-50: #fdf6e3;
+  --bg-100: #f5ebd6;
+  --card: rgba(255, 248, 236, 0.94);
+  --card-strong: #fffaf0;
+  --panel: #f7ead1;
+  --border: rgba(196, 154, 88, 0.32);
+  --text: #3a2f1f;
+  --text-soft: #6b5836;
+  --text-muted: #826d47;
+  --brand: #c78d34;
+  --brand-strong: #b0701d;
+  --warning: #b57a26;
+  --shadow: rgba(99, 74, 26, 0.10);
+}
+
+body {
+  background: linear-gradient(180deg, var(--bg-50), var(--bg-100));
+  color: var(--text);
+}
+
+body[data-theme="light"] {
+  background: linear-gradient(180deg, var(--bg-50), var(--bg-100)) !important;
+  color: var(--text) !important;
+}
+
+body[data-theme="light"] #elgoplan-root,
+body[data-theme="light"] #elgoplan-root > div,
+body[data-theme="light"] #elgoplan-root * {
+  color: var(--text);
+}
+
+body[data-theme="light"] #elgoplan-root {
+  background: transparent;
+}
+
+body[data-theme="light"] #elgoplan-root > div > div {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 14px 28px var(--shadow) !important;
+}
+
+body[data-theme="light"] #elgoplan-root .plan-shell,
+body[data-theme="light"] #elgoplan-root [style*="background: C.card"],
+body[data-theme="light"] #elgoplan-root [style*="background: var(--card)"],
+body[data-theme="light"] #elgoplan-root [style*="background: '#fffaf0'"] {
+  background: var(--card-strong) !important;
+  border-color: var(--border) !important;
+}
+
+body[data-theme="light"] #elgoplan-root button,
+body[data-theme="light"] #elgoplan-root input,
+body[data-theme="light"] #elgoplan-root textarea,
+body[data-theme="light"] #elgoplan-root select {
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+body[data-theme="light"] #elgoplan-root button {
+  transition: all 0.2s ease;
+}
+
+body[data-theme="light"] #elgoplan-root button:hover {
+  border-color: rgba(199, 141, 52, 0.7) !important;
+  background: rgba(247, 234, 209, 0.9) !important;
+}
+
+body[data-theme="light"] #elgoplan-root .mood-btn,
+body[data-theme="light"] #elgoplan-root button[style*="borderRadius"] {
+  background: transparent !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+body[data-theme="light"] #elgoplan-root button[style*="rgba(99,102,241"] {
+  background: rgba(199, 141, 52, 0.15) !important;
+  border-color: rgba(199, 141, 52, 0.45) !important;
+  color: var(--brand-strong) !important;
+}
+
+body[data-theme="light"] #elgoplan-root .task-item,
+body[data-theme="light"] #elgoplan-root li,
+body[data-theme="light"] #elgoplan-root .task-row {
+  background: rgba(255, 250, 240, 0.8) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+body[data-theme="light"] #elgoplan-root p,
+body[data-theme="light"] #elgoplan-root li,
+body[data-theme="light"] #elgoplan-root span,
+body[data-theme="light"] #elgoplan-root div,
+body[data-theme="light"] #elgoplan-root label {
+  color: var(--text);
+}
+
+body[data-theme="light"] #elgoplan-root .text-soft,
+body[data-theme="light"] #elgoplan-root [style*="color: C.dim"],
+body[data-theme="light"] #elgoplan-root [style*="color: #94a3b8"],
+body[data-theme="light"] #elgoplan-root [style*="color: rgb(148, 163, 184)"] {
+  color: var(--text-soft) !important;
+}
+
+body[data-theme="light"] #elgoplan-root .task-item h4,
+body[data-theme="light"] #elgoplan-root h2,
+body[data-theme="light"] #elgoplan-root h3,
+body[data-theme="light"] #elgoplan-root h4,
+body[data-theme="light"] #elgoplan-root h5,
+body[data-theme="light"] #elgoplan-root strong {
+  color: var(--text) !important;
+}
+
+body[data-theme="light"] #elgoplan-root .chat-panel,
+body[data-theme="light"] #elgoplan-root #chat-panel,
+body[data-theme="light"] #chat-panel {
+  background: rgba(255, 249, 238, 0.98) !important;
+  border-color: rgba(196, 154, 88, 0.3) !important;
+  box-shadow: 0 18px 38px rgba(99, 74, 26, 0.14) !important;
+}
+
+body[data-theme="light"] #chat-panel input,
+body[data-theme="light"] #chat-panel button,
+body[data-theme="light"] #chat-panel .chat-msg-user,
+body[data-theme="light"] #chat-panel .chat-msg-assistant,
+body[data-theme="light"] #chat-panel .chat-thinking-label {
+  color: var(--text) !important;
+}
+
+body[data-theme="light"] #chat-panel .chat-msg-assistant {
+  background: rgba(255, 250, 240, 0.92) !important;
+  border: 1px solid rgba(196, 154, 88, 0.28) !important;
+}
+
+body[data-theme="light"] #chat-panel .chat-msg-user {
+  background: rgba(214, 173, 98, 0.18) !important;
+  border: 1px solid rgba(196, 154, 88, 0.24) !important;
+}
+
+body[data-theme="light"] #chat-panel button[type="submit"],
+body[data-theme="light"] #chat-toggle {
+  background: linear-gradient(135deg, #c78d34, #d8a857) !important;
+  color: #fff !important;
+  border-color: rgba(196, 154, 88, 0.5) !important;
+}
+
+body[data-theme="light"] #chat-panel input {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(196, 154, 88, 0.38) !important;
+}
+
+.elgoplan-page {
+  padding: 28px 20px;
+}
+
+.plan-shell {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 20px;
+}
+
+.task-list {
+  display: grid;
+  gap: 12px;
+}
+
+.task-item {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: rgba(148, 163, 184, 0.03);
+}
+
+.task-item h4 {
+  margin: 0 0 6px;
+}
+
+.task-item p {
+  margin: 0;
+  color: var(--text-soft);
+}
